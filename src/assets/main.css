@@ -1,0 +1,69 @@
+@import 'tailwindcss';
+
+/*
+  LE TEST DES 90 JOURS — tokens de design
+  Reference : docs/design-pattern.md
+  Contrainte spec 16.3 : deux couleurs maximum + trois gris.
+  Aucun rouge alarmiste, aucun vert rassurant.
+*/
+
+@theme {
+  /* Les deux couleurs */
+  --color-encre: #1b2a3a;
+  --color-laiton: #9a7b4f;
+
+  /* Les trois gris */
+  --color-papier: #faf9f7;
+  --color-trait: #ddd9d3;
+  --color-gristexte: #6b7280;
+
+  /* Typographie : serif pour les titres, sans-serif pour le corps */
+  --font-titre: 'Lora', Georgia, serif;
+  --font-corps: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Largeur de lecture : le contenu ne depasse jamais 640px */
+  --container-lecture: 640rem;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-papier);
+    color: var(--color-encre);
+    font-family: var(--font-corps);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-titre);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  /* Focus toujours visible — jamais supprime (docs/design-pattern.md 9) */
+  :focus-visible {
+    outline: 2px solid var(--color-laiton);
+    outline-offset: 2px;
+  }
+
+  /* Mouvement reduit respecte */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
