@@ -597,6 +597,10 @@ ce qui invaliderait aussi les données du futur Baromètre.
 | 5 | Moment de la capture | **Partie 1 avant Q1 / Partie 2 après Q18** | Manager (WhatsApp) |
 | 6 | Contenu rédactionnel | **Rédigé par Claude**, dans un fichier séparé et éditable, validé ensuite par le manager | Équipe |
 | 7 | Scoring | **Côté serveur** (Edge Function) | Décision technique |
+| 8 | Hébergement | **Vercel**, sans nom de domaine pour l'instant | Utilisateur |
+| 9 | Email en phase de test | **`delivered@resend.dev`** — adresse de test Resend, aucun domaine à vérifier. Bascule vers le domaine réel plus tard. | Utilisateur |
+| 10 | Signature du rapport | **Temporaire, explicitement marquée comme telle** dans le PDF. À remplacer par un nom et une fonction réels avant la mise en ligne. | Utilisateur |
+| 11 | Parcours | **Une question par écran, étape par étape.** Jamais de page unique listant les questions. | Utilisateur + spec §16.1 |
 
 ---
 

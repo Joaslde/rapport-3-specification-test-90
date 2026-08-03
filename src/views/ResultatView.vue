@@ -1,10 +1,122 @@
 <script setup>
-// Phase 3.17 — affichage sobre du score. Spec 9.4 : aucune emphase, aucun compteur anime.
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { supabase } from '@/lib/supabase'
+import { useParcours } from '@/stores/parcours'
+import EnteteCabinet from '@/components/base/EnteteCabinet.vue'
+import PiedPage from '@/components/base/PiedPage.vue'
+
+/*
+  Écran de résultat. Spec §9.4 :
+  « L'affichage doit être sobre et sans emphase. Toute dramatisation
+    typographique affaiblit l'effet. »
+
+  Rien d'autre sur cet écran : pas de bouton de partage, pas de récapitulatif,
+  pas de jauge. Le rapport arrive par email — c'est lui qui porte l'analyse.
+
+  Le score est calculé par l'Edge Function, jamais ici (règle S1).
+*/
+const router = useRouter()
+const parcours = useParcours()
+
+const resultat = ref(null)
+const chargement = ref(true)
+const erreur = ref(null)
+const rapportEnvoye = ref(false)
+
+onMounted(async () => {
+  parcours.restaurerLocal()
+
+  if (!parcours.sessionId) {
+    router.replace('/')
+    return
+  }
+
+  try {
+    const { data, error } = await supabase.functions.invoke('calculer-resultat', {
+      body: { session_id: parcours.sessionId },
+    })
+    if (error) throw error
+    if (data?.erreur) throw new Error(data.erreur)
+
+    resultat.value = data
+    await parcours.tracer('vue_resultat')
+
+    /*
+      Envoi du rapport par email — spec §12 : « dans les 60 secondes ».
+      L'appel n'est pas attendu : le score s'affiche immédiatement, l'envoi
+      se poursuit en arrière-plan. Un échec d'envoi ne doit jamais empêcher
+      le répondant de voir son résultat.
+    */
+    supabase.functions
+      .invoke('envoyer-rapport', { body: { session_id: parcours.sessionId } })
+      .then(({ data: envoi }) => {
+        if (envoi?.envoye) rapportEnvoye.value = true
+      })
+      .catch(() => {
+        // L'échec est tracé côté serveur ; le répondant n'a rien à faire.
+      })
+  } catch {
+    erreur.value = "Le calcul n'a pas abouti. Vos réponses sont enregistrées."
+  } finally {
+    chargement.value = false
+  }
+})
 </script>
 
 <template>
-  <main class="mx-auto max-w-[640px] px-6 py-16">
-    <h1 class="font-titre text-2xl">Votre Indice 90</h1>
-    <p class="mt-6 text-gristexte">Resultat — a implementer (todo.md 3.17).</p>
-  </main>
+  <div class="min-h-screen">
+    <EnteteCabinet compact />
+
+    <main class="mx-auto max-w-[640px] px-6 pt-16 pb-4 sm:pt-24">
+      <p v-if="chargement" class="text-base text-gristexte">Calcul en cours…</p>
+
+      <div v-else-if="erreur">
+        <p class="text-base text-encre">{{ erreur }}</p>
+        <p class="mt-4 text-[15px] text-gristexte">
+          Votre rapport vous sera adressé par email dès que possible.
+        </p>
+      </div>
+
+      <div v-else-if="resultat">
+        <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">Indice 90</p>
+
+        <div class="mt-4 flex items-baseline gap-3">
+          <span
+            class="font-titre text-[96px] leading-none font-semibold tracking-[-0.03em] sm:text-[124px]"
+          >
+            {{ resultat.indice90 }}
+          </span>
+          <span class="font-titre text-2xl text-gristexte">/ 100</span>
+        </div>
+
+        <div class="mt-8 h-px w-16 bg-laiton" />
+
+        <h1 class="mt-8 font-titre text-[28px] leading-[1.2] font-semibold sm:text-[36px]">
+          Votre entreprise fonctionne environ {{ resultat.jours }}
+          {{ resultat.jours > 1 ? 'jours' : 'jour' }} sans vous.
+        </h1>
+
+        <p class="mt-8 border-t border-trait pt-6 text-base leading-[1.65] text-gristexte">
+          Le seuil au-delà duquel une entreprise est considérée comme transférable est de
+          <span class="text-encre">90 jours</span>.
+        </p>
+
+        <div class="mt-12 bg-encre/[0.03] px-6 py-6">
+          <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+            Votre rapport
+          </p>
+          <p class="mt-3 text-[15px] leading-[1.6]">
+            Votre analyse complète de 8 pages
+            <span class="text-encre">{{ rapportEnvoye ? 'vient de vous être envoyée' : 'vous est adressée' }}</span>
+            par email, à l'adresse
+            <span class="text-encre">{{ parcours.identite.email }}</span
+            >.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <PiedPage />
+  </div>
 </template>

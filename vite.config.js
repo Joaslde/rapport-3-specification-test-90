@@ -6,8 +6,14 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [vue(), vueDevTools(), tailwindcss()],
+export default defineConfig(({ mode }) => ({
+  plugins: [
+    vue(),
+    // Le badge flottant Vue DevTools ne doit jamais apparaître en production —
+    // ni sur un preview Vercel : il donne une impression de site non fini.
+    mode === 'development' && vueDevTools(),
+    tailwindcss(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -25,4 +31,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

@@ -37,6 +37,301 @@ document de spécification. Elles ont le même statut contraignant.
 
 ## JOURNAL DES BUGS
 
+### [3 août 2026] — Badge Vue DevTools visible en production sur Vercel
+
+**Ce qui a mal tourné :**
+L'utilisateur a signalé, une fois déployé sur Vercel, que le logo/badge flottant de Vue
+DevTools restait affiché sur le site en ligne — donnant une impression de site non fini
+sur un produit qui se veut « niveau grand cabinet ».
+
+**Cause racine :**
+`vite.config.js` activait `vueDevTools()` sans condition : `plugins: [vue(), vueDevTools(), tailwindcss()]`.
+Ce plugin injecte son overlay dans le HTML servi, y compris sur un `vite build` de production —
+il n'est pas désactivé automatiquement par le mode.
+
+**Correction appliquée :**
+`vite.config.js` exporte désormais une fonction `(​{ mode }) => ({...})` et n'active
+`vueDevTools()` que si `mode === 'development'`. Effet de bord : `vitest.config.js` important
+`vite.config.js` via `mergeConfig` ne supporte pas un export en forme de callback — il faut
+résoudre la fonction avant de la fusionner (`viteConfigFn({ mode: 'test', command: 'serve' })`).
+
+**Vérification :** `npm run build` puis `grep -r "vue-devtools" dist/` → absent. `npx vitest run`
+→ 122 tests toujours au vert.
+
+**Règle pour l'éviter :**
+> **L14 — Tout plugin de développement (devtools, inspecteur, overlay) doit être
+> conditionné explicitement au mode, jamais activé par défaut.** Vérifier le HTML généré par
+> `npm run build` (pas seulement `npm run dev`) avant tout déploiement.
+
+---
+
+### [3 août 2026] — Favicon resté celui du template Vue
+
+**Ce qui a mal tourné :**
+Le favicon affiché en production était toujours le logo Vue.js par défaut du scaffolding
+`create-vue` — jamais remplacé, repéré seulement une fois le site déployé sur Vercel.
+
+**Cause racine :**
+Oubli pur : `public/favicon.ico` n'a jamais été régénéré depuis la Phase 0. Aucune règle du
+projet ne couvrait cet élément, alors que la charte graphique (`docs/design-pattern.md`)
+s'applique à toute l'identité visuelle, favicon inclus.
+
+**Correction appliquée :**
+Favicon régénéré aux couleurs de la charte (fond Encre, « 90 » en Papier, filet Laiton) —
+`.ico` multi-résolution (16/32/48) pour compatibilité large, plus `favicon.svg` en priorité
+pour les navigateurs modernes (net à toute taille). Les deux référencés dans `index.html`.
+
+**Règle pour l'éviter :**
+> **L15 — Le scaffolding d'un framework laisse des artefacts de marque par défaut
+> (favicon, titre, métadonnées) qui doivent être traités comme faisant partie de la charte
+> graphique, pas comme des détails techniques.** À vérifier explicitement en fin de Phase 1
+> (design system), pas découvert a posteriori en production.
+
+---
+
+### [3 août 2026] — ⚠️ Des tests de sécurité qui passaient sans rien vérifier
+
+**Ce qui a mal tourné :**
+Les tests « le PDF ne contient AUCUN texte du scénario de rupture » et « AUCUNE sollicitation
+commerciale » passaient au vert. Ils ne vérifiaient rien : mon extracteur de texte renvoyait
+une chaîne **vide**. `''.includes('Au jour 90')` est `false` — le test passait quel que soit
+le contenu réel du fichier.
+
+**Cause racine :**
+pdf-lib écrit les chaînes de texte en **hexadécimal** (`<444F43…> Tj`), pas en littéral
+parenthésé (`(texte) Tj`). Mon regex ne cherchait que la forme littérale et ne trouvait
+jamais rien.
+
+C'est le pire type de défaut : un test **négatif** qui échoue silencieusement donne une
+fausse assurance sur exactement ce qu'il est censé garantir — ici, une exigence déontologique.
+
+**Correction appliquée :**
+1. Extraction des deux formes, hexadécimale et littérale.
+2. Surtout : un garde-fou `verifierExtracteur()` qui **lève une exception** si l'extraction
+   renvoie moins de 200 caractères, plus deux tests positifs sur l'extracteur lui-même.
+
+**Vérification :** le garde-fou a immédiatement fait tomber 8 tests qui étaient faussement
+au vert. Après correction de l'extracteur : 122 tests passent.
+
+**Règle pour l'éviter :**
+> **L10 — Tout test négatif (« X n'est pas présent ») doit être accompagné d'un test positif
+> sur le même instrument de mesure.** Sans preuve que l'outil sait trouver quelque chose,
+> son silence ne prouve rien. Pour un test sur un format binaire ou compressé, toujours
+> commencer par vérifier que l'extraction produit du contenu.
+
+---
+
+### [3 août 2026] — `StandardFonts.TimesBold` n'existe pas
+
+**Ce qui a mal tourné :**
+`embedFont(StandardFonts.TimesBold)` échouait avec `font must be of type string […] but was
+actually of type undefined`. Le message pointait vers le type de l'argument, pas vers sa source.
+
+**Cause racine :**
+Le nom correct dans pdf-lib est **`TimesRomanBold`**, pas `TimesBold`. `StandardFonts.TimesBold`
+vaut `undefined`, transmis tel quel à `embedFont`. J'ai supposé le nom au lieu de le vérifier.
+
+**Correction appliquée :** `TimesRoman`, `TimesRomanBold`, `Helvetica`, `HelveticaBold`,
+`HelveticaOblique` — noms vérifiés par énumération de `Object.keys(StandardFonts)`.
+
+**Règle pour l'éviter :**
+> **L11 — Ne jamais deviner le nom d'une constante d'API.** Un `undefined` passé à une
+> fonction produit un message d'erreur qui décrit le symptôme, jamais la cause.
+> Énumérer les clés réelles (`Object.keys`) coûte dix secondes.
+
+---
+
+### [3 août 2026] — Une page 7 vide sur les profils solides
+
+**Ce qui a mal tourné :**
+`TypeError: p.paragraphes is not iterable` à la génération du PDF pour un profil bien structuré.
+
+**Cause racine — un défaut de conception, pas seulement un bug :**
+Sur un profil solide, aucun des neuf déclencheurs de la matrice §13.2 n'est rempli.
+`assemblerScenario()` renvoyait `null`, mais l'assembleur créait quand même la page.
+Au-delà du plantage, la vraie question était : que raconte une page « scénario de rupture »
+quand il n'y a rien à raconter ? Une page « rien ne se passerait » affaiblirait l'instrument.
+
+**Correction appliquée :**
+La page est **omise** quand aucun bloc n'est déclenché, et les pages suivantes sont
+**renumérotées** pour qu'aucun numéro ne saute. Un indicateur `meta.scenarioOmis` distingue
+ce cas de l'omission pour protocole de sécurité.
+
+**Règle pour l'éviter :**
+> **L12 — Un plantage sur un cas limite cache souvent une question de conception non tranchée.**
+> Avant de corriger par un `?? []`, se demander ce que le produit doit faire dans ce cas —
+> la bonne réponse est parfois « ne rien afficher », pas « afficher vide ».
+
+---
+
+### [3 août 2026] — Rendu PDF en image impossible sous Node
+
+**Ce qui a mal tourné :**
+La conversion des PDF en PNG pour vérification visuelle produisait des images **entièrement
+blanches**, alors que les PDF contenaient bien du texte (vérifié par extraction).
+
+**Cause racine :**
+Incompatibilité entre `pdfjs-dist` et `node-canvas` dans cet environnement : `page.render()`
+se termine sans erreur mais n'écrit aucun pixel (0 pixel non blanc sur toute la page).
+Le PDF n'était pas en cause.
+
+**Contournement appliqué :**
+Vérification de la mise en page par **extraction du texte avec ses coordonnées** :
+chaque ligne, sa position `x`/`y`, et détection automatique des débordements hors marges.
+Moins visuel, mais plus fiable et automatisable.
+
+**Règle pour l'éviter :**
+> **L13 — Quand un outil de vérification échoue, distinguer d'abord si le défaut est dans
+> l'artefact ou dans l'instrument.** Ici : deux minutes de diagnostic (le canvas seul
+> fonctionne-t-il ? le PDF contient-il du texte ?) ont évité de chercher un bug inexistant
+> dans le générateur.
+
+### [3 août 2026] — ⚠️ FAILLE : `anon` pouvait supprimer des sessions
+
+**Ce qui a mal tourné :**
+Test de pénétration : `DELETE /rest/v1/sessions?id=eq.<uuid>` avec la clé publique
+retournait **HTTP 204**. Un attaquant pouvait effacer les réponses de n'importe quel répondant.
+
+**Cause racine :**
+Supabase applique un `GRANT ALL` par défaut aux rôles `anon` et `authenticated` sur les tables
+créées dans le schéma `public`. Je pensais qu'« absence de politique RLS DELETE » suffisait à
+bloquer — c'est faux : le privilège SQL restait, et la politique `UPDATE` existante rendait la
+ligne visible à l'opération.
+
+**Correction appliquée :**
+`revoke delete, truncate, references, trigger on ... from anon, authenticated`
+sur toutes les tables, plus `revoke all` sur `resultats` et `barometre_config`.
+
+**Vérification :** `DELETE` renvoie désormais **HTTP 401** sur `sessions` et `evenements`.
+
+**Règle pour l'éviter :**
+> **L6 — Sur Supabase, RLS ne suffit pas : les privilèges SQL par défaut sont permissifs.**
+> Après toute création de table, révoquer explicitement `delete`, `truncate`, `references`,
+> `trigger` pour `anon` et `authenticated`, puis accorder au cas par cas — idéalement
+> **colonne par colonne**. Et toujours vérifier par une vraie requête HTTP, pas par lecture
+> des politiques.
+
+---
+
+### [3 août 2026] — Politique RLS bloquée par un privilège de colonne
+
+**Ce qui a mal tourné :**
+L'insertion d'un événement de tracking renvoyait **HTTP 401** alors que la politique
+semblait correcte.
+
+**Cause racine :**
+La politique vérifiait l'existence de la session par
+`exists (select 1 from sessions where id = ...)`. Or `anon` n'a le privilège `SELECT` que sur
+la colonne `id` de `sessions` : la sous-requête déclenchait un contrôle de privilège sur la
+table entière, refusé.
+
+**Correction appliquée :**
+Une fonction `session_active(uuid)` en `SECURITY DEFINER` qui ne renvoie **qu'un booléen**,
+sans exposer la moindre colonne. La politique appelle cette fonction.
+
+**Règle pour l'éviter :**
+> **L7 — Une politique RLS qui interroge une autre table s'exécute avec les privilèges du
+> rôle appelant.** Si ce rôle n'a que des privilèges de colonne, la sous-requête échoue.
+> Encapsuler le contrôle dans une fonction `SECURITY DEFINER` qui ne retourne qu'un booléen.
+
+---
+
+### [3 août 2026] — Test PostgREST faussement en échec (`return=representation`)
+
+**Ce qui a mal tourné :**
+La création de session échouait avec `permission denied for table sessions`, alors que le
+privilège `INSERT` était bien accordé. J'ai d'abord cru à un problème de privilèges.
+
+**Cause racine :**
+`Prefer: return=representation` **sans** `?select=id` demande à PostgREST de retourner
+*toutes* les colonnes — ce qui exige un `SELECT` sur la table entière, volontairement révoqué.
+Le privilège d'insertion n'était pas en cause.
+
+**Correction appliquée :**
+Appeler `POST /rest/v1/sessions?select=id` avec `return=representation`. Le client
+`supabase-js` fait la même chose via `.insert(...).select('id')`.
+
+**Règle pour l'éviter :**
+> **L8 — Avec des privilèges de colonne, toujours restreindre explicitement le `select`
+> de retour.** Un `RETURNING *` implicite fait échouer l'écriture pour une raison de lecture —
+> et le message d'erreur pointe vers le mauvais problème.
+
+---
+
+### [3 août 2026] — Compteur du Baromètre à zéro : ce n'était pas un bug
+
+**Ce qui a mal tourné (en apparence) :**
+Après 2 résultats calculés, `barometre_config.nb_repondants` restait à 0. J'ai suspecté
+le trigger.
+
+**Cause racine — comportement correct :**
+Le contrôle anti-bot (spec §6.2 de `docs/securite.md`) marque `qualite = 'suspecte'` toute
+session bouclée en moins de 45 secondes. Mes tests par `curl` répondaient aux 18 questions en
+2 secondes. Le trigger ne compte que les sessions `ok` — il fonctionnait exactement comme prévu.
+
+**Vérification :** en reculant `demarre_le` de 7 minutes, `nb_repondants` passe à 1 et
+`indice_median` à 50.
+
+**Règle pour l'éviter :**
+> **L9 — Un test automatisé ne reproduit pas le rythme humain.** Avant de conclure à un bug
+> sur une métrique, vérifier qu'aucun contrôle anti-abus n'a disqualifié le jeu de données de
+> test. Pour tester une règle temporelle, manipuler l'horodatage plutôt que d'attendre.
+
+### [2 août 2026] — ⚠️ La formule et la table de la spécification divergent (§9.1 vs §9.2)
+
+**Ce qui a mal tourné :**
+Les tests écrits contre la table publiée en §9.2 échouaient sur 3 valeurs sur 10.
+
+**Cause racine — ce n'est pas un bug du code, c'est une incohérence du document source :**
+
+| Indice 90 | Formule `3·e^(I/21)` | Arrondi | Table §9.2 | Écart |
+|---|---|---|---|---|
+| 30 | 12,518 | **13** | 12 | troncature au lieu d'arrondi |
+| 90 | 217,963 | **218** | 217 | troncature au lieu d'arrondi |
+| 100 | 350,906 | **351** | **365** | **+14 — la table force l'année pleine** |
+
+Les cas 30 et 90 s'expliquent par une troncature. Le cas 100 ne s'explique ni par troncature ni
+par arrondi : la table cale volontairement la borne haute sur 365 pour la cohérence narrative
+(« Entreprise entièrement transférable » = une année complète).
+
+**Arbitrage (utilisateur) :** **la formule fait autorité.** La table §9.2 devient indicative.
+Point à signaler au manager.
+
+**Conséquence pratique :** l'écart est de 1 jour sur la plage réellement observée (distribution
+attendue entre 25 et 55 d'Indice 90, spec §9.3). Il n'atteint 14 jours qu'à I=100, score
+quasi inexistant (~5 % de la cohorte au-dessus de 81).
+
+**Règle pour l'éviter :**
+> **L4 — Quand un document de spécification publie à la fois une formule et une table de
+> valeurs, vérifier qu'elles coïncident AVANT d'écrire le code.** Ne pas supposer que l'auteur
+> a calculé sa propre table. En cas de divergence, ne pas trancher seul : remonter l'écart chiffré.
+
+---
+
+### [2 août 2026] — Audit de sécurité faussement positif (`-Include` sans wildcard)
+
+**Ce qui a mal tourné :**
+Mon audit du bundle a annoncé **6 fuites du barème**. Panique injustifiée : il n'y en avait aucune.
+
+**Cause racine :**
+`Get-ChildItem "dist" -Recurse -File -Include *.js` ne filtre rien quand le chemin ne contient pas
+de wildcard — PowerShell ignore `-Include` dans ce cas et retourne une liste vide.
+`Select-String -Quiet` sur une entrée vide retourne `$null`, et mon `if ($hit)` inversait la
+lecture du résultat. Chaque motif était donc rapporté comme « fuite ».
+
+**Correction appliquée :**
+Filtrage par `Where-Object { $_.Extension -in ".js",".css",".html" }`, et test explicite
+`if ($null -ne $r)`. L'audit affiche désormais le nombre de fichiers réellement inspectés —
+c'est ce compteur qui aurait révélé le problème immédiatement.
+
+**Vérification :** 8 fichiers audités, 8 motifs testés, 0 occurrence. Le barème ne fuit pas.
+
+**Règle pour l'éviter :**
+> **L5 — Un audit de sécurité doit afficher le volume de ce qu'il a réellement inspecté.**
+> Un test qui ne dit pas « j'ai examiné N fichiers » peut n'avoir rien examiné du tout.
+> Corollaire de L3 : un résultat de sécurité inattendu — dans les deux sens — commence par
+> une mise en doute de l'instrument de mesure.
+
 ### [2 août 2026] — Le `.gitignore` généré n'ignorait pas les fichiers `.env`
 
 **Ce qui a mal tourné :**

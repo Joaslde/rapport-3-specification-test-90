@@ -12,7 +12,14 @@ export default defineConfig([
     files: ['**/*.{vue,js,mjs,jsx}'],
   },
 
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
+  globalIgnores([
+    '**/dist/**',
+    '**/dist-ssr/**',
+    '**/coverage/**',
+    // Copies générées par `npm run sync:fonctions` — la source est _shared/.
+    'supabase/functions/calculer-resultat/*.js',
+    'supabase/functions/generer-rapport/*.js',
+  ]),
 
   {
     languageOptions: {
@@ -25,9 +32,19 @@ export default defineConfig([
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
 
+  // Tests et scripts : environnement Node (Buffer, process, __dirname…).
+  {
+    files: ['tests/**/*.js', 'scripts/**/*.mjs', '*.config.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+
   {
     ...pluginVitest.configs.recommended,
-    files: ['src/**/__tests__/*'],
+    files: ['src/**/__tests__/*', 'tests/**/*.spec.js'],
   },
 
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
