@@ -62,7 +62,30 @@
 - [x] 1.1 Rédiger `docs/design-pattern.md` — palette Encre/Laiton + 3 gris, échelle typo, composants, interdits
 - [x] 1.2 Sélectionner les polices — **Lora** (serif, titres) + **Inter** (sans-serif, corps) — *proposition à valider*
 - [x] 1.3 Configurer les tokens — dans `src/assets/main.css` (Tailwind 4 : `@theme`, plus de `tailwind.config.js`)
-- [ ] 1.3b Charger réellement les fichiers de police en woff2, sous-ensemble latin (budget < 80 Ko)
+- [x] 1.3b **Charger réellement les polices** — ⚠️ Lora et Inter étaient déclarées dans les tokens mais **jamais chargées** : le site tombait sur Georgia / system-ui. C'était la première cause du rendu « générique ». Corrigé via Google Fonts + `preconnect` + `display=swap`, graisses limitées (Lora 500/600, Inter 400/500). CSP `vercel.json` mise à jour en conséquence.
+
+### ✨ PASSE PREMIUM — 4 août 2026
+
+**Demande utilisateur :** *« quelque chose de premium […] sans porter atteinte à la charte graphique »*.
+Direction retenue après consultation du skill `ui-ux-pro-max` (styles « Editorial Grid / Magazine »
+et « Minimalist Monochrome ») : **la typographie porte le premium, pas la couleur**.
+
+**Charte strictement préservée** — aucune couleur ajoutée, toujours Encre + Laiton + 3 gris,
+aucun dégradé, aucune ombre décorative, aucune animation (spec §16.3, exigence manager).
+
+- [x] P.1 Polices réellement chargées (voir 1.3b) — l'écart le plus visible
+- [x] P.2 `font-feature-settings` : ligatures et crénage activés (`kern`, `liga`, `calt`)
+- [x] P.3 **Chiffres tabulaires** (`tabular-nums`) sur l'Indice, les jours et les colonnes du back-office — les chiffres restent alignés et l'Indice ne « saute » plus visuellement de 9 à 10 (règle `number-tabular` du skill)
+- [x] P.4 `text-wrap: balance` sur les titres, `pretty` sur les paragraphes — plus de mot orphelin en fin de titre
+- [x] P.5 Accueil : titre sur deux lignes en 54px, sur-titre laiton + filet horizontal, exergue en serif, liste numérotée `01/02/03` au lieu de puces
+- [x] P.6 Résultat : Indice en 136px avec interlettrage resserré (-0.045em), filet laiton élargi
+- [x] P.7 En-tête : **monogramme « 90 » cerclé** en laiton — point d'ancrage identitaire sans logo ni image (spec §16.3 interdit les photos)
+- [x] P.8 Rayons ramenés à 0 (boutons et cartes) — code du document imprimé, pas de l'application grand public
+- [x] P.9 Sélection d'une réponse : filet interne laiton (`inset shadow`) au lieu de `border-2` — **supprime le décalage d'1px** qui faisait bouger la carte à la sélection
+- [x] P.10 Retour de pression `active:` sur les boutons, sans déplacement de mise en page
+
+**Preuves :** build OK · lint 0 erreur · **122 tests au vert** · CSS 10,2 Ko gzippé ·
+polices vérifiées présentes dans le HTML et le CSS compilés.
 
 ### 🎨 REPRISE VISUELLE — demandée par l'utilisateur (3 août 2026)
 
@@ -724,3 +747,6 @@ Ouvrir sur un vrai téléphone, ou dans le navigateur : F12 → icône mobile �
 | 4 août 2026 | **Création de `docs/a-remonter-au-manager.md`** : dossier autonome et détaillé, sur demande explicite de l'utilisateur. Pour chaque point : citation exacte de la spec, raisonnement complet, calcul vérifié à la main pour O1 (formule/table), localisation précise dans le code. Détaille aussi les 123 textes rédigés (6 verdicts + 90 champs de sous-dimension + 9 blocs de scénario + 18 actions), la règle de spec qui justifie chacun, et les 11 tests écrits pour les vérifier automatiquement. |
 | 4 août 2026 | Script `npm run lire:contenu` ajouté — imprime les 123 textes en clair pour relecture, sans ouvrir le code. Vérifié : 450 lignes produites. |
 | 4 août 2026 | **Phase 9ter (back-office) ajoutée sur demande utilisateur.** Route `/admin` : liste de tous les tests passés et rapports envoyés, avec détail par profil. Édge Function `admin-resultats` protégée par mot de passe unique (décision utilisateur), vérification en temps constant, jamais dans le bundle. **2 vrais tests découverts en base** en testant l'accès. RLS toujours actif : la table reste inaccessible en direct via la clé publique. |
+| 4 août 2026 | **Skill `ui-ux-pro-max` installé** (7 skills, 146 fichiers) + Python 3.14.5 vérifié. **21st.dev connecté** en MCP, avec consigne stricte : structure/comportement uniquement, jamais les couleurs ou effets par défaut (style SaaS générique, contraire à la spec §16.3). Higgsfield et Framer Motion écartés par l'utilisateur — pas d'animations demandées par le manager. |
+| 4 août 2026 | **Passe accessibilité** issue des checklists du skill : focus clavier rendu visible sur les 90 options de réponse (`has-[:focus-visible]`, le radio étant `sr-only`), `role="alert"` sur les erreurs de formulaire, `inputmode="email"`. `.claude/**` exclu du lint (code tiers). |
+| 4 août 2026 | **Passe premium.** Découverte majeure : **Lora et Inter n'étaient jamais chargées** — le site affichait Georgia/system-ui, ce qui expliquait le rendu générique. Corrigé, puis raffinements typographiques (chiffres tabulaires, ligatures, `text-wrap`), monogramme « 90 » en en-tête, rayons à 0, correction du décalage d'1px à la sélection d'une réponse. **Charte inchangée : aucune couleur ajoutée.** |

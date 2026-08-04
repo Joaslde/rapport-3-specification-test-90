@@ -16,6 +16,18 @@ const saisie = ref('')
 const detailOuvert = ref(null)
 const chargementDetail = ref(false)
 const filtre = ref('')
+const lienCopie = ref(false)
+
+const lienRapport = computed(() => {
+  if (!detailOuvert.value?.token_rapport) return ''
+  return `${window.location.origin}/rapport?t=${detailOuvert.value.token_rapport}`
+})
+
+async function copierLien() {
+  await navigator.clipboard.writeText(lienRapport.value)
+  lienCopie.value = true
+  setTimeout(() => (lienCopie.value = false), 2000)
+}
 
 onMounted(() => admin.tenterReprise())
 
@@ -214,7 +226,9 @@ const NIVEAUX_LIBELLES = {
       class="fixed inset-0 z-10 bg-encre/40"
       @click.self="fermerDetail"
     >
-      <div class="ml-auto h-full w-full max-w-lg overflow-y-auto bg-papier px-8 py-10 shadow-xl">
+      <div
+        class="ml-auto h-full w-full max-w-lg overflow-x-hidden overflow-y-auto bg-papier px-8 py-10 shadow-xl"
+      >
         <button class="text-[13px] text-gristexte hover:text-encre" @click="fermerDetail">
           ← Fermer
         </button>
@@ -240,52 +254,62 @@ const NIVEAUX_LIBELLES = {
           </div>
 
           <dl class="mt-8 space-y-3 text-sm">
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Niveau</dt>
-              <dd>{{ NIVEAUX_LIBELLES[detailOuvert.niveau_id] ?? detailOuvert.niveau_id }}</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Niveau</dt>
+              <dd class="min-w-0 text-right break-words">
+                {{ NIVEAUX_LIBELLES[detailOuvert.niveau_id] ?? detailOuvert.niveau_id }}
+              </dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Archétype</dt>
-              <dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Archétype</dt>
+              <dd class="min-w-0 text-right break-words">
                 {{ detailOuvert.archetype_id }}
                 <span v-if="detailOuvert.archetype_provisoire" class="text-laiton">(provisoire)</span>
               </dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Axe 1 — Entreprise</dt>
-              <dd>{{ detailOuvert.score_a1 }} / 100</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Axe 1 — Entreprise</dt>
+              <dd class="min-w-0 text-right break-words">{{ detailOuvert.score_a1 }} / 100</dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Axe 2 — Entourage</dt>
-              <dd>{{ detailOuvert.score_a2 }} / 100</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Axe 2 — Entourage</dt>
+              <dd class="min-w-0 text-right break-words">{{ detailOuvert.score_a2 }} / 100</dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Axe 3 — Vous</dt>
-              <dd>{{ detailOuvert.score_a3 }} / 100</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Axe 3 — Vous</dt>
+              <dd class="min-w-0 text-right break-words">{{ detailOuvert.score_a3 }} / 100</dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Pays</dt>
-              <dd>{{ detailOuvert.sessions?.pays || '—' }}</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Pays</dt>
+              <dd class="min-w-0 text-right break-words">{{ detailOuvert.sessions?.pays || '—' }}</dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Chiffre d'affaires</dt>
-              <dd>{{ detailOuvert.sessions?.chiffre_affaires || '—' }}</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Chiffre d'affaires</dt>
+              <dd class="min-w-0 text-right break-words">
+                {{ detailOuvert.sessions?.chiffre_affaires || '—' }}
+              </dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Effectif</dt>
-              <dd>{{ detailOuvert.sessions?.effectif || '—' }}</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Effectif</dt>
+              <dd class="min-w-0 text-right break-words">{{ detailOuvert.sessions?.effectif || '—' }}</dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Événement récent</dt>
-              <dd>{{ detailOuvert.sessions?.evenement_recent || '—' }}</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Événement récent</dt>
+              <dd class="min-w-0 text-right break-words">
+                {{ detailOuvert.sessions?.evenement_recent || '—' }}
+              </dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Rapport envoyé</dt>
-              <dd>{{ detailOuvert.rapport_envoye_le ? formaterDate(detailOuvert.rapport_envoye_le) : 'Non' }}</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Rapport envoyé</dt>
+              <dd class="min-w-0 text-right break-words">
+                {{ detailOuvert.rapport_envoye_le ? formaterDate(detailOuvert.rapport_envoye_le) : 'Non' }}
+              </dd>
             </div>
-            <div class="flex justify-between border-b border-trait pb-2">
-              <dt class="text-gristexte">Test démarré</dt>
-              <dd>{{ formaterDate(detailOuvert.sessions?.demarre_le) }}</dd>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Test démarré</dt>
+              <dd class="min-w-0 text-right break-words">
+                {{ formaterDate(detailOuvert.sessions?.demarre_le) }}
+              </dd>
             </div>
           </dl>
 
@@ -298,13 +322,55 @@ const NIVEAUX_LIBELLES = {
             </p>
           </div>
 
-          <div class="mt-8">
+          <div class="mt-8 min-w-0">
             <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
               Lien du rapport web
             </p>
-            <p class="mt-2 truncate text-[12px] text-gristexte">
-              /rapport?t={{ detailOuvert.token_rapport }}
+            <p class="mt-2 min-w-0 text-[12px] break-all text-gristexte">
+              {{ lienRapport }}
             </p>
+            <div class="mt-3 flex gap-3">
+              <button
+                type="button"
+                class="flex items-center gap-1.5 border border-trait px-3 py-1.5 text-[12px] text-encre hover:border-encre/40"
+                @click="copierLien"
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="1" />
+                  <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" />
+                </svg>
+                {{ lienCopie ? 'Copié' : 'Copier' }}
+              </button>
+              <a
+                :href="lienRapport"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-1.5 border border-trait px-3 py-1.5 text-[12px] text-encre hover:border-encre/40"
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <path d="M15 3h6v6" />
+                  <path d="M10 14 21 3" />
+                </svg>
+                Ouvrir
+              </a>
+            </div>
           </div>
         </div>
       </div>

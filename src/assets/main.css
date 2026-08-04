@@ -17,9 +17,9 @@
   --color-trait: #ddd9d3;
   --color-gristexte: #6b7280;
 
-  /* Typographie : serif pour les titres, sans-serif pour le corps */
+  /* Typographie : deux serifs distinctes — Lora pour les titres, Source Serif 4 pour le corps */
   --font-titre: 'Lora', Georgia, serif;
-  --font-corps: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-corps: 'Source Serif 4', Georgia, serif;
 
   /* Largeur de lecture : le contenu ne depasse jamais 640px */
   --container-lecture: 640rem;
@@ -38,6 +38,9 @@
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Ligatures et crénage : rendu de qualite typographique, pas de rendu par defaut. */
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    text-rendering: optimizeLegibility;
   }
 
   h1,
@@ -47,6 +50,23 @@
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.2;
+    /* Évite les coupures disgracieuses en fin de titre. */
+    text-wrap: balance;
+  }
+
+  /* Le corps de texte évite les lignes orphelines d'un seul mot. */
+  p {
+    text-wrap: pretty;
+  }
+
+  /*
+    Chiffres tabulaires sur toutes les données chiffrées (règle `number-tabular`
+    du skill) : les colonnes du back-office et les scores restent alignés, et
+    l'Indice ne « saute » pas visuellement en passant de 9 à 10.
+  */
+  .chiffres {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
   }
 
   /* Focus toujours visible — jamais supprime (docs/design-pattern.md 9) */

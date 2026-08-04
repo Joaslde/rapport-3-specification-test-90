@@ -11,14 +11,20 @@ defineProps({
 </script>
 
 <template>
+  <!--
+    Rayon 0 : code du document imprimé plutôt que du bouton d'application.
+    Interlettrage léger + graisse medium : lisibilité et tenue à l'écran.
+    `active:` donne un retour de pression sans déplacer la mise en page
+    (règle `press-feedback` du skill, sans layout shift).
+  -->
   <button
     :type="type"
     :disabled="desactive"
-    class="min-h-[52px] w-full rounded-[2px] px-6 text-base font-medium transition-colors duration-150"
+    class="min-h-[54px] w-full rounded-none px-6 text-[15px] font-medium tracking-[0.02em] transition-colors duration-150 disabled:cursor-not-allowed"
     :class="
       variante === 'principal'
-        ? 'bg-encre text-papier hover:bg-encre/90 disabled:bg-trait disabled:text-gristexte'
-        : 'border border-trait bg-transparent text-gristexte hover:border-encre/30 hover:text-encre'
+        ? 'bg-encre text-papier hover:bg-encre/88 active:bg-encre/95 disabled:bg-trait disabled:text-gristexte'
+        : 'border border-trait bg-transparent text-gristexte hover:border-encre/40 hover:text-encre active:bg-encre/[0.03]'
     "
   >
     <slot />

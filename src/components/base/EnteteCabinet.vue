@@ -11,19 +11,29 @@ defineProps({
 </script>
 
 <template>
-  <header class="border-b border-trait">
+  <header class="border-b border-encre/12">
     <div
-      class="mx-auto flex max-w-[640px] items-baseline justify-between px-6"
+      class="mx-auto flex max-w-[640px] items-center justify-between px-6"
       :class="compact ? 'py-4' : 'py-5'"
     >
-      <p class="font-titre text-[15px] font-semibold tracking-[-0.01em] text-encre">
-        Le Test des 90 Jours
-      </p>
-      <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+      <!--
+        Monogramme « 90 » cerclé + nom : donne un point d'ancrage visuel
+        à l'identité, sans logo ni image (spec §16.3 : aucune photo).
+      -->
+      <div class="flex items-center gap-3">
+        <span
+          class="chiffres flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-laiton font-titre text-[11px] font-semibold text-laiton tabular-nums"
+          aria-hidden="true"
+        >
+          90
+        </span>
+        <p class="font-titre text-[15px] font-semibold tracking-[-0.01em] text-encre">
+          Le Test des 90 Jours
+        </p>
+      </div>
+      <p class="hidden text-[10px] font-medium tracking-[0.2em] text-gristexte uppercase sm:block">
         Diagnostic
       </p>
     </div>
-    <!-- Filet d'accent : le seul laiton de l'écran, 1px, discret. -->
-    <div class="h-px bg-laiton/40" />
   </header>
 </template>

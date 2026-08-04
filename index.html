@@ -10,6 +10,24 @@
       content="Combien de temps votre entreprise fonctionnerait-elle sans vous ? 18 questions, 7 minutes, un rapport de 8 pages."
     />
     <meta name="robots" content="index, follow" />
+
+    <!--
+      Polices de la charte (docs/design-pattern.md) : Lora en titres, Source Serif 4 en corps.
+      Le corps est passé d'Inter à une serif de lecture (retour à l'esprit du repli
+      Georgia initial, en plus raffiné) : un sans-serif générique affaiblissait le ton
+      éditorial du reste de la mise en page.
+
+      preconnect : ouvre la connexion avant la découverte du CSS (gain ~100-300 ms).
+      display=swap : le texte reste lisible pendant le chargement, jamais invisible.
+      Graisses limitées au strict nécessaire pour tenir le budget de poids.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap"
+      rel="stylesheet"
+    />
+
     <title>Le Test des 90 Jours</title>
   </head>
   <body>

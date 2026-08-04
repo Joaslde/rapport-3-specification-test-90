@@ -16,9 +16,12 @@ export default defineConfig([
     '**/dist/**',
     '**/dist-ssr/**',
     '**/coverage/**',
+    // Skills tiers installés via `uipro init` — code fourni, non maintenu ici.
+    '.claude/**',
     // Copies générées par `npm run sync:fonctions` — la source est _shared/.
     'supabase/functions/calculer-resultat/*.js',
     'supabase/functions/generer-rapport/*.js',
+    'supabase/functions/envoyer-rapport/*.js',
   ]),
 
   {

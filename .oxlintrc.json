@@ -6,5 +6,6 @@
   },
   "categories": {
     "correctness": "error"
-  }
+  },
+  "ignorePatterns": [".claude/**", "dist/**", "supabase/functions/*/[a-z]*.js"]
 }

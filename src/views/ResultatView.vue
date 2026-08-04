@@ -79,27 +79,35 @@ onMounted(async () => {
       </div>
 
       <div v-else-if="resultat">
-        <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">Indice 90</p>
+        <!-- Sur-titre + filet : même code que l'accueil, cohérence d'ensemble. -->
+        <div class="flex items-center gap-4">
+          <span class="text-[11px] font-medium tracking-[0.18em] text-laiton uppercase">
+            Indice 90
+          </span>
+          <span class="h-px flex-1 bg-trait" aria-hidden="true"></span>
+        </div>
 
-        <div class="mt-4 flex items-baseline gap-3">
+        <!-- Le chiffre porte tout l'écran. Aucun compteur animé (spec §9.4). -->
+        <div class="chiffres mt-8 flex items-baseline gap-4">
           <span
-            class="font-titre text-[96px] leading-none font-semibold tracking-[-0.03em] sm:text-[124px]"
+            class="font-titre text-[104px] leading-[0.85] font-semibold tracking-[-0.045em] tabular-nums sm:text-[136px]"
           >
             {{ resultat.indice90 }}
           </span>
-          <span class="font-titre text-2xl text-gristexte">/ 100</span>
+          <span class="font-titre text-[22px] text-gristexte">/ 100</span>
         </div>
 
-        <div class="mt-8 h-px w-16 bg-laiton" />
+        <div class="mt-10 h-px w-20 bg-laiton" />
 
-        <h1 class="mt-8 font-titre text-[28px] leading-[1.2] font-semibold sm:text-[36px]">
-          Votre entreprise fonctionne environ {{ resultat.jours }}
+        <h1 class="mt-9 font-titre text-[29px] leading-[1.16] font-semibold sm:text-[38px]">
+          Votre entreprise fonctionne environ
+          <span class="chiffres tabular-nums">{{ resultat.jours }}</span>
           {{ resultat.jours > 1 ? 'jours' : 'jour' }} sans vous.
         </h1>
 
-        <p class="mt-8 border-t border-trait pt-6 text-base leading-[1.65] text-gristexte">
+        <p class="mt-10 border-t border-trait pt-7 text-base leading-[1.7] text-gristexte">
           Le seuil au-delà duquel une entreprise est considérée comme transférable est de
-          <span class="text-encre">90 jours</span>.
+          <span class="chiffres font-medium text-encre tabular-nums">90 jours</span>.
         </p>
 
         <div class="mt-12 bg-encre/[0.03] px-6 py-6">

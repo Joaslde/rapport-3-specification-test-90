@@ -173,6 +173,7 @@ watch(
           v-model="form.email"
           label="Email professionnel"
           type="email"
+          inputmode="email"
           autocomplete="email"
           :maxlength="254"
           :erreur="erreurs.email"
