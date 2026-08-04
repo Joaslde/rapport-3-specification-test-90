@@ -8,7 +8,7 @@
 <template>
   <footer class="mt-20 border-t border-trait">
     <div class="mx-auto max-w-[640px] px-6 py-8">
-      <p class="text-[13px] leading-[1.5] text-gristexte">
+      <p class="text-center text-[13px] leading-[1.5] text-gristexte">
         Vos réponses sont confidentielles et ne sont jamais transmises à un tiers.
       </p>
     </div>
