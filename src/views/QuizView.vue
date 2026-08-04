@@ -208,7 +208,7 @@ watch(
         </div>
       </form>
 
-      <p class="mt-8 border-t border-trait pt-6 text-[13px] leading-[1.5] text-gristexte">
+      <p class="mt-8 border-t border-trait pt-6 text-center text-[13px] leading-[1.5] text-gristexte">
         Vos réponses sont confidentielles et ne sont jamais transmises à un tiers.
       </p>
     </section>
