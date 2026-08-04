@@ -55,3 +55,6 @@ __screenshots__/
 
 # PDF d'exemple générés localement pour relecture manager — pas du code source
 /exemplaires-pdf
+
+# Captures de vérification visuelle — régénérables, pas du code source
+/captures

@@ -32,7 +32,7 @@ async function commencer() {
   <div class="min-h-screen">
     <EnteteCabinet />
 
-    <main class="mx-auto max-w-[640px] px-6 pt-16 pb-4 sm:pt-24">
+    <main class="mx-auto max-w-[640px] px-6 pt-10 pb-4 sm:pt-14">
       <!-- Sur-titre + filet : codes du document imprimé, pas de la page web. -->
       <div class="flex items-center gap-4">
         <span class="text-[11px] font-medium tracking-[0.18em] text-laiton uppercase">
@@ -42,7 +42,7 @@ async function commencer() {
       </div>
 
       <h1
-        class="mt-7 font-titre text-[38px] leading-[1.06] font-semibold tracking-[-0.03em] sm:text-[54px]"
+        class="mt-6 font-titre text-[38px] leading-[1.06] font-semibold tracking-[-0.03em] sm:text-[54px]"
       >
         Le Test<br />des 90 Jours
       </h1>
@@ -51,7 +51,7 @@ async function commencer() {
         Le constat fondateur (spec §2.1). Traité comme un exergue de rapport :
         filet laiton, texte en serif, source attribuée juste en dessous.
       -->
-      <blockquote class="mt-12 border-l-2 border-laiton pl-7">
+      <blockquote class="mt-8 border-l-2 border-laiton pl-7">
         <p class="font-titre text-[19px] leading-[1.55] font-medium sm:text-[21px]">
           Les travaux universitaires sur les entreprises africaines établissent un constat sévère :
           leur durée de vie n'excède souvent pas huit ans — et pour les plus solides, elle est
@@ -59,13 +59,26 @@ async function commencer() {
         </p>
       </blockquote>
 
-      <p class="mt-12 text-[17px] leading-[1.65]">
+      <p class="mt-8 text-[17px] leading-[1.65]">
         Ce test mesure une seule chose :
         <span class="font-medium">combien de temps votre entreprise fonctionnerait sans vous.</span>
       </p>
 
+      <!--
+        CTA principal, au-dessus de la ligne de flottaison : le geste doit être
+        possible dès la première vue, sans défilement. Le bouton du bas est
+        conservé — c'est le même geste, proposé une seconde fois à qui a lu
+        les règles jusqu'au bout.
+      -->
+      <div class="mt-8">
+        <BaseButton @click="commencer">Commencer le test</BaseButton>
+        <p class="mt-4 text-center text-[13px] text-gristexte">
+          Sept minutes. Aucune inscription.
+        </p>
+      </div>
+
       <!-- Repères chiffrés, en chiffres tabulaires pour un alignement net. -->
-      <dl class="chiffres mt-12 grid grid-cols-3 border-y border-encre/15">
+      <dl class="chiffres mt-10 grid grid-cols-3 border-y border-encre/15">
         <div class="border-r border-trait py-6 pr-4">
           <dt class="font-titre text-[30px] leading-none font-semibold">18</dt>
           <dd class="mt-2.5 text-[12px] tracking-[0.04em] text-gristexte">questions</dd>
@@ -114,13 +127,10 @@ async function commencer() {
         </ol>
       </div>
 
+      <!-- Reprise du même geste en fin de lecture, pour qui a lu les règles. -->
       <div class="mt-12">
         <BaseButton @click="commencer">Commencer le test</BaseButton>
       </div>
-
-      <p class="mt-5 text-center text-[13px] text-gristexte">
-        Sept minutes. Aucune inscription.
-      </p>
     </main>
 
     <PiedPage />
