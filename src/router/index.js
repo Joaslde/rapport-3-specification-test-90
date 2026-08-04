@@ -30,6 +30,14 @@ const router = createRouter({
       component: () => import('@/views/RapportView.vue'),
     },
     {
+      // Back-office interne : liste des tests passés et rapports envoyés.
+      // Protégé par mot de passe (Edge Function admin-resultats), pas par
+      // Supabase Auth — décision utilisateur du 4 août 2026.
+      path: '/admin',
+      name: 'admin',
+      component: () => import('@/views/AdminView.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },

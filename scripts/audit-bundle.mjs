@@ -59,6 +59,8 @@ const MOTIFS = [
   { id: 're_', libelle: 'clé API Resend', prefixe: true },
   { id: 'sbp_', libelle: 'token d’accès Supabase', prefixe: true },
   { id: 'SERVICE_ROLE', libelle: 'clé service_role Supabase' },
+  { id: 'ADMIN_PASSWORD', libelle: 'mot de passe du back-office' },
+  { id: 'HywfAzEEDaCAJnUCIUb8s3GdvN5O_l4W', libelle: 'valeur en clair du mot de passe admin' },
 ]
 
 const liste = fichiers(DIST)

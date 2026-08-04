@@ -11,6 +11,7 @@
     "test:unit": "vitest",
     "sync:fonctions": "node scripts/sync-fonctions.mjs",
     "audit:bundle": "node scripts/audit-bundle.mjs",
+    "lire:contenu": "node scripts/lire-contenu.mjs",
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",

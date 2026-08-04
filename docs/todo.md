@@ -11,14 +11,15 @@
 
 | | |
 |---|---|
-| **Phases terminées** | Phase 0 ✅ · 2 ✅ · 3 ✅ · 4 ✅ · 5 ✅ · 6 ✅ · 7 ✅ · 8 ✅ |
+| **Phases terminées** | Phase 0 ✅ · 2 ✅ · 3 ✅ · 4 ✅ · 5 ✅ · 6 ✅ · 7 ✅ · 8 ✅ · 9bis ✅ · 9ter ✅ |
 | **Tâche courante** | *(aucune — en attente de reprise)* |
 | **Prochaine tâche** | Recette manuelle par l'utilisateur → voir **§ PARCOURS DE TEST** en bas |
-| **Dernière mise à jour** | 3 août 2026 |
+| **Dernière mise à jour** | 4 août 2026 |
 | **Prochain jalon** | Déploiement Vercel (Phase 10) |
 | **Chaîne complète** | ✅ **Fonctionne de bout en bout** : parcours → score → PDF → email |
 | **Supabase** | ✅ Projet `TEST DES 90 JOURS` — 4 tables, RLS testée, Edge Function déployée |
 | **Parcours** | ✅ Jouable de bout en bout : accueil → capture → 18 écrans → profil → score |
+| **Back-office** | ✅ `/admin` — récapitulatif de tous les tests + détail par profil, protégé par mot de passe |
 | **🔴 RGPD** | **NON FAIT — bloquant.** Aucune case de consentement, aucune politique de confidentialité. Détail en Phase 9 (§9.8-9.9). |
 
 ---
@@ -361,6 +362,40 @@ aucun domaine vérifié. À remplacer par une adresse du domaine réel avant la 
 
 ---
 
+## PHASE 9ter — BACK-OFFICE (récapitulatif des résultats)
+
+> Demande utilisateur du 4 août 2026 : une page connectée à la base, listant tous les tests
+> passés et rapports envoyés, avec le détail de chaque profil.
+
+- [x] 9c.1 Décision d'accès : **mot de passe unique** (pas Supabase Auth — v1 interne, toi + manager)
+- [x] 9c.2 Mot de passe stocké en secret Supabase (`ADMIN_PASSWORD`), jamais dans le code
+- [x] 9c.3 Edge Function `admin-resultats` — actions `liste` et `detail`, vérification en temps constant
+- [x] 9c.4 Route `/admin` — écran de connexion puis tableau de bord
+- [x] 9c.5 Tableau : date, prénom, entreprise, pays, Indice, jours, niveau, statut d'envoi
+- [x] 9c.6 Repères chiffrés : total, rapports envoyés, protocoles de sécurité actifs, qualité « ok »
+- [x] 9c.7 Filtre par prénom / entreprise / email
+- [x] 9c.8 Panneau de détail : les 3 axes, archétype, incohérences, profil complet, lien du rapport web
+- [x] 9c.9 Session gardée en `sessionStorage` (pas `localStorage`) — le mot de passe ne survit pas à la fermeture de l'onglet
+- [x] 9c.10 Ajout au script `npm run audit:bundle` : le mot de passe ne doit jamais fuiter dans le bundle
+
+### Preuves de la Phase 9ter
+
+| Contrôle | Résultat |
+|---|---|
+| Mauvais mot de passe | `{"erreur":"Mot de passe incorrect"}`, HTTP 401 ✅ |
+| Aucun mot de passe fourni | même refus ✅ |
+| Bon mot de passe | liste renvoyée — **2 vrais tests trouvés en base**, dont un du compte du cabinet ✅ |
+| Contournement direct de `resultats` via la clé publique | **toujours bloqué par RLS** — le back-office est le seul chemin d'accès ✅ |
+| Audit bundle | mot de passe absent du code livré au navigateur ✅ |
+| Tests unitaires | 122/122 toujours au vert après l'ajout ✅ |
+| Build | route `/admin` isolée dans son propre chunk, 3,6 Ko gzippé — n'alourdit pas le reste du site ✅ |
+
+**🔑 Mot de passe actuel du back-office** (généré, à donner au manager, changeable à tout
+moment via `supabase secrets set ADMIN_PASSWORD=...`) : voir message de fin de tâche —
+**ne jamais l'écrire dans ce fichier versionné.**
+
+---
+
 ## PHASE 9 — SÉCURITÉ & CONFORMITÉ
 
 - [x] 9.1 `docs/securite.md` rédigé (Phase 0)
@@ -600,82 +635,27 @@ Ouvrir sur un vrai téléphone, ou dans le navigateur : F12 → icône mobile �
 
 ## 📨 À REMONTER AU MANAGER
 
-> Tout ce qui doit lui être signalé, classé par urgence.
-> Les points 🔴 empêchent la mise en ligne ; les 🟠 sont des décisions de fond ;
-> les 🟡 sont des confirmations de forme.
+> **Dossier complet et détaillé : [docs/a-remonter-au-manager.md](a-remonter-au-manager.md).**
+> Document autonome, transmissible tel quel — chaque point y cite la phrase exacte de sa
+> spécification, explique le raisonnement complet, et indique où retrouver le texte ou le code
+> concerné. Ci-dessous : uniquement la synthèse pour le suivi interne.
 
 ### 🔴 BLOQUANTS — la mise en ligne est impossible sans ces réponses
 
-| # | Sujet | Ce qu'il faut | Pourquoi |
-|---|---|---|---|
-| **B1** | **Signature du rapport** | Un **nom et une fonction réels** | La spec §16.3 l'exige et interdit « L'équipe ». Aujourd'hui : `[Nom du signataire à définir]` + filigrane « DOCUMENT PROVISOIRE » sur la couverture. |
-| **B2** | **Nom de domaine** | Le domaine acheté | Nécessaire pour : ① l'adresse d'expédition des emails (aujourd'hui `delivered@resend.dev`, une adresse de test), ② la mise en ligne. Rappel de sa contrainte : **jamais de `.html`**, un seul mot-clé collé — `domaine.com/quiz`. |
-| **B3** | **Validation du contenu rédactionnel** | Relecture des textes | J'ai rédigé ~60 textes : 6 verdicts d'archétype (150 mots), 15 sous-dimensions × 4 traitements, 9 blocs de scénario, 18 actions. Fichiers `supabase/functions/_shared/contenu-*.js`. **Rien n'est validé par un humain à ce jour.** |
-
----
-
-### 🟠 DÉCISIONS DE FOND — je propose, il tranche
-
-#### O1 — ⚠️ La formule et la table de la spécification ne coïncident pas (§9)
-
-**Le point le plus important à lui signaler.**
-
-En codant le moteur, j'ai constaté que la formule `JOURS = arrondi(3 × e^(I/21))` (§9.1) et la
-table de correspondance (§9.2) donnent des résultats différents sur **3 valeurs sur 10** :
-
-| Indice 90 | Formule | Table §9.2 | Écart |
-|---|---|---|---|
-| 30 | **13** | 12 | 1 jour |
-| 90 | **218** | 217 | 1 jour |
-| **100** | **351** | **365** | **14 jours** |
-
-Pour 30 et 90, la table semble tronquée au lieu d'être arrondie. Pour 100, l'écart ne s'explique
-par aucun arrondi : la table cale probablement la borne haute sur une année pleine, pour la
-cohérence narrative.
-
-**Décision appliquée : la formule fait autorité.** Raison : c'est elle qui sera citée
-publiquement et doit rester vérifiable par un tiers. L'impact est faible — l'écart n'est que
-d'1 jour sur la plage où se situera l'immense majorité des répondants (Indice 25 à 55, §9.3).
-
-**Deux questions pour lui :**
-1. Confirme-t-il, ou préfère-t-il forcer 365 jours à un Indice de 100 ?
-2. Si la table §9.2 doit être publiée, elle mérite d'être recalculée.
-
-#### O2 — Les archétypes ne couvrent que 6 des 8 combinaisons possibles (§10.2)
-
-Le document nomme 6 archétypes, mais 3 axes forts/faibles donnent **8 combinaisons**.
-Ne sont nommées nulle part :
-
-- `A1 faible · A2 fort · A3 fort`
-- `A1 fort · A2 faible · A3 fort`
-
-**Solution provisoire :** rattachement à l'archétype le plus proche par l'axe déficient,
-avec un marqueur `provisoire: true` dans les données pour qu'ils ne passent pas inaperçus.
-Il faut soit deux archétypes supplémentaires rédigés, soit une règle de rattachement validée.
-
-#### O3 — Les 7 questions de la section §19 de sa propre spécification
-
-Il les a posées lui-même en fin de document et personne n'y a répondu. Valeurs par défaut
-appliquées en attendant :
-
-| # | Sa question | Défaut appliqué |
+| # | Sujet | Ce qu'il faut |
 |---|---|---|
-| 1 | 18 questions, ou 12 + version longue optionnelle ? | **18** |
-| 2 | Validation des noms « Test des 90 Jours » / « Indice 90 » ? | **Validés** |
-| 3 | Moment de la capture email ? | **Tranché par son WhatsApp** — P1 avant Q1, P2 après Q18 |
-| 4 | Q12 (trésorerie familiale) : conserver / adoucir / réserver au payant ? | **Conservée telle quelle** |
-| 5 | Exclusion des compensations et addictions confirmée ? | **Exclues** |
-| 6 | Version croisée avec le bras droit : v1 ou v2 ? | **v2** — hors périmètre actuel |
-| 7 | Seuil d'éligibilité : 300 M FCFA + 10 collaborateurs, ou abaissé ? | **Maintenu**, paramétrable dans `contenu-suite.js` |
+| **B1** | Signature du rapport | Un nom et une fonction réels (spec §16.3 interdit « L'équipe ») |
+| **B2** | Nom de domaine | Pour l'adresse d'expédition des emails et la mise en ligne |
+| **B3** | Validation du contenu rédactionnel | **123 textes** rédigés, relecture détaillée au § 6 du dossier complet — commande `npm run lire:contenu` pour tout relire d'un coup |
 
-#### O4 — Décision de conception que j'ai prise seul
+### 🟠 DÉCISIONS DE FOND — détaillées dans le dossier complet
 
-Sur un profil globalement faible, la page 4 s'intitulait « Vos trois forces » pour des scores
-de 25/100. Présenter cela comme des forces décrédibiliserait l'ensemble du rapport.
-**La page devient « Vos points les moins fragiles » sous le seuil de 50**, et propose un levier
-au lieu d'un risque d'excès. À confirmer.
-
----
+| # | Sujet | Résumé |
+|---|---|---|
+| **O1** | ⚠️ La formule et la table de sa propre spec ne coïncident pas (§9) | 7 valeurs sur 10 coïncident, 2 divergent d'1 jour, 1 diverge de 14 jours (Indice 100 : formule=351, table=365). Détail du calcul complet dans le dossier. Décision appliquée : la formule fait autorité. |
+| **O2** | Les archétypes ne couvrent que 6 des 8 combinaisons possibles (§10.2) | 2 combinaisons non nommées, rattachées provisoirement (`provisoire: true`) |
+| **O3** | Les 7 questions qu'il a posées lui-même en §19 de sa spec, jamais tranchées | Défauts appliqués, documentés un par un dans le dossier |
+| **O4** | Décision de conception prise seul (page 4 : « forces » sur un profil faible) | Corrigé en « points les moins fragiles » sous le seuil de 50 |
 
 ### 🟡 CONFIRMATIONS DE FORME
 
@@ -741,3 +721,6 @@ au lieu d'un risque d'excès. À confirmer.
 | 3 août 2026 | **Corrections signalées par l'utilisateur après déploiement Vercel :** badge Vue DevTools visible en prod (jamais désactivé hors mode dev), favicon resté celui du template Vue. Les deux corrigés. Leçons L14, L15. |
 | 3 août 2026 | **Parcours de test entièrement réécrit** avec des valeurs de calcul exactes (Indice, jours, scores d'axe) recalculées par le vrai moteur — pas des estimations — pour permettre une vérification chiffrée, pas seulement visuelle. |
 | 3 août 2026 | **Point RGPD (§9.8-9.9) remonté en tête de fichier comme bloquant explicite** : aucune case de consentement, aucune politique de confidentialité publiée à ce jour. C'est le seul manque de conformité actif du produit. |
+| 4 août 2026 | **Création de `docs/a-remonter-au-manager.md`** : dossier autonome et détaillé, sur demande explicite de l'utilisateur. Pour chaque point : citation exacte de la spec, raisonnement complet, calcul vérifié à la main pour O1 (formule/table), localisation précise dans le code. Détaille aussi les 123 textes rédigés (6 verdicts + 90 champs de sous-dimension + 9 blocs de scénario + 18 actions), la règle de spec qui justifie chacun, et les 11 tests écrits pour les vérifier automatiquement. |
+| 4 août 2026 | Script `npm run lire:contenu` ajouté — imprime les 123 textes en clair pour relecture, sans ouvrir le code. Vérifié : 450 lignes produites. |
+| 4 août 2026 | **Phase 9ter (back-office) ajoutée sur demande utilisateur.** Route `/admin` : liste de tous les tests passés et rapports envoyés, avec détail par profil. Édge Function `admin-resultats` protégée par mot de passe unique (décision utilisateur), vérification en temps constant, jamais dans le bundle. **2 vrais tests découverts en base** en testant l'accès. RLS toujours actif : la table reste inaccessible en direct via la clé publique. |

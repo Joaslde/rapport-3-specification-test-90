@@ -1,0 +1,112 @@
+// @ts-nocheck — exécuté par Deno sur Supabase.
+/*
+  EDGE FUNCTION — back-office : liste des tests passés et rapports envoyés
+
+  Protégée par un mot de passe unique (secret ADMIN_PASSWORD), pas par
+  Supabase Auth — décision utilisateur du 4 août 2026 : accès simple pour
+  une v1 interne (toi + le manager), pas de gestion de comptes multiples.
+
+  ⚠️ Cette fonction est le SEUL moyen de lire les tables sensibles depuis
+  l'extérieur : RLS bloque tout accès direct via la clé publique (Phase 5).
+  Le mot de passe est vérifié ici, côté serveur, jamais côté client.
+
+  Deux actions, données dans le corps de la requête :
+    { "mot_de_passe": "...", "action": "liste" }              -> tableau récapitulatif
+    { "mot_de_passe": "...", "action": "detail", "id": "..." } -> un résultat complet
+*/
+
+import { createClient } from 'jsr:@supabase/supabase-js@2'
+
+const ENTETES_CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+}
+
+function reponse(corps: unknown, statut = 200) {
+  return new Response(JSON.stringify(corps), {
+    status: statut,
+    headers: { ...ENTETES_CORS, 'Content-Type': 'application/json' },
+  })
+}
+
+/** Comparaison en temps constant — évite qu'un attaquant devine le mot de passe caractère par caractère via le temps de réponse. */
+function comparerEnTempsConstant(a: string, b: string) {
+  if (a.length !== b.length) return false
+  let diff = 0
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  return diff === 0
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: ENTETES_CORS })
+  if (req.method !== 'POST') return reponse({ erreur: 'Méthode non autorisée' }, 405)
+
+  try {
+    const { mot_de_passe, action, id } = await req.json()
+
+    const attendu = Deno.env.get('ADMIN_PASSWORD')
+    if (!attendu || typeof mot_de_passe !== 'string' || !comparerEnTempsConstant(mot_de_passe, attendu)) {
+      // Délai artificiel : ralentit une attaque par force brute sur le mot de passe.
+      await new Promise((r) => setTimeout(r, 400))
+      return reponse({ erreur: 'Mot de passe incorrect' }, 401)
+    }
+
+    const admin = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    )
+
+    if (action === 'liste') {
+      const { data, error } = await admin
+        .from('resultats')
+        .select(
+          `id, indice90, jours, niveau_id, archetype_id, protocole_securite,
+           rapport_envoye_le, cree_le,
+           sessions ( prenom, entreprise, email, pays, qualite )`,
+        )
+        .order('cree_le', { ascending: false })
+        .limit(500)
+
+      if (error) return reponse({ erreur: 'Lecture impossible' }, 500)
+
+      return reponse({
+        total: data.length,
+        resultats: data.map((r) => ({
+          id: r.id,
+          prenom: r.sessions?.prenom ?? '',
+          entreprise: r.sessions?.entreprise ?? '',
+          email: r.sessions?.email ?? '',
+          pays: r.sessions?.pays ?? '',
+          qualite: r.sessions?.qualite ?? 'inconnue',
+          indice90: r.indice90,
+          jours: r.jours,
+          niveau: r.niveau_id,
+          archetype: r.archetype_id,
+          protocoleSecurite: r.protocole_securite,
+          rapportEnvoye: Boolean(r.rapport_envoye_le),
+          dateEnvoi: r.rapport_envoye_le,
+          dateCreation: r.cree_le,
+        })),
+      })
+    }
+
+    if (action === 'detail' && typeof id === 'string') {
+      const { data, error } = await admin
+        .from('resultats')
+        .select(
+          `*, sessions ( prenom, entreprise, email, pays, chiffre_affaires, effectif,
+           anciennete, rentabilite, secteur, evenement_recent, reponses, demarre_le, termine_le )`,
+        )
+        .eq('id', id)
+        .maybeSingle()
+
+      if (error || !data) return reponse({ erreur: 'Résultat introuvable' }, 404)
+      return reponse({ resultat: data })
+    }
+
+    return reponse({ erreur: 'Action inconnue' }, 400)
+  } catch {
+    return reponse({ erreur: 'Erreur de traitement' }, 500)
+  }
+})
