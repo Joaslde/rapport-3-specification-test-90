@@ -175,4 +175,51 @@ export const ARCHETYPES_TEXTES = {
       "place. Ces décisions se préparent des années à l'avance, et elles se prennent mieux " +
       "depuis la position que vous occupez aujourd'hui que sous la contrainte d'un événement.",
   },
+
+  /*
+    Archétypes 7 et 8 — texte définitif fourni par le cabinet.
+    Note d'audit du 3 août 2026, §7.3. Ces deux combinaisons étaient absentes de
+    la spécification d'origine et faisaient l'objet d'un rattachement provisoire
+    qui produisait un diagnostic faux (audit §7.2).
+  */
+  hommes_sans_machine: {
+    nom: "Les hommes sont là, la machine n'est pas construite",
+    diagnostic:
+      "Vous allez bien et votre entourage est solide. Ce n'est pas le cas de votre organisation.",
+    verdict:
+      "Vous allez bien et votre entourage est solide. Ce n'est pas le cas de votre " +
+      'organisation.\n\n' +
+      "C'est la configuration la plus favorable parmi celles dont l'axe opérationnel est " +
+      'faible, et de loin. Vous n’avez ni problème de personne, ni problème d’énergie : vous ' +
+      'avez un problème de construction. Les procédures ne sont pas écrites, les décisions ne ' +
+      'sont pas déléguées formellement, les relations bancaires et administratives reposent ' +
+      'encore sur vous. Rien de tout cela n’est difficile à corriger — c’est simplement un ' +
+      'travail qui n’a pas encore été fait.\n\n' +
+      'Le risque est précisément là. Comme tout va bien par ailleurs, rien ne vous oblige à ' +
+      'vous en occuper. Vous tenez, votre équipe tient, et la dépendance reste invisible tant ' +
+      'qu’aucun événement ne la révèle. Elle se révélera d’un coup, le jour où vous ne serez ' +
+      'pas disponible — et ce jour-là, ni votre solidité ni celle de votre équipe ne pourront ' +
+      'compenser l’absence de structure.\n\n' +
+      'Vous disposez aujourd’hui de tout ce qu’il faut pour traiter cela vite. Cette situation ' +
+      'ne durera pas indéfiniment.',
+  },
+
+  structure_sans_porteur: {
+    nom: 'La structure tient, personne ne la porte',
+    diagnostic:
+      "Votre organisation fonctionne et vous allez bien. Il n'y a personne autour de vous.",
+    verdict:
+      'Votre organisation fonctionne et vous allez bien. Il n’y a personne autour de vous.\n\n' +
+      'Votre entreprise tourne parce que vous l’avez bien construite : les processus existent, ' +
+      'les choses se font sans vous. Mais un processus n’arbitre pas, ne décide pas d’une ' +
+      'situation inédite, et ne reprend pas la direction. Il n’y a personne pour vous ' +
+      'remplacer, personne pour vous contredire, personne à qui transmettre.\n\n' +
+      'Tant que rien d’imprévu ne survient, cela ne se voit pas. Le jour où une décision ' +
+      'réellement nouvelle se présente — une opportunité, une crise, une rupture — la structure ' +
+      'ne saura pas y répondre, et vous serez à nouveau seul.\n\n' +
+      'C’est aussi la configuration qui pèse le plus lourd sur la valeur de votre entreprise. ' +
+      'Un acquéreur n’achète pas seulement une organisation qui tourne : il achète une équipe ' +
+      'de direction capable de la conduire après votre départ. Une entreprise sans second se ' +
+      'vend mal, quelle que soit la qualité de ses processus.',
+  },
 }

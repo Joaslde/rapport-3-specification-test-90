@@ -476,6 +476,12 @@ function rendreAxes(r, p) {
     r.filet()
     r.texte(p.benchmark, { taille: 9.5, couleur: GRIS })
   }
+
+  // Distinction Indice 90 / 90 jours (note d'audit du 3 août 2026, §5.4).
+  if (p.noteIndice) {
+    r.filet()
+    r.texte(p.noteIndice, { taille: 9, couleur: GRIS })
+  }
 }
 
 function rendreForces(r, p) {

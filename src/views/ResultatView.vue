@@ -110,6 +110,17 @@ onMounted(async () => {
           <span class="chiffres font-medium text-encre tabular-nums">90 jours</span>.
         </p>
 
+        <!--
+          Distinction Indice 90 / 90 jours — note d'audit du 3 août 2026, §5.4.
+          « Un prospect attentif le remarquera. Il faut donc le dire avant lui. »
+        -->
+        <p class="mt-5 text-[15px] leading-[1.65] text-gristexte">
+          L'Indice 90 porte le nom du seuil qu'il mesure : les 90 jours — un trimestre, soit un
+          quart d'année. Un Indice de 90 sur 100 ne signifie pas 90 jours : il signifie que votre
+          entreprise dépasse très largement ce seuil. Le seuil des 90 jours est franchi à partir
+          d'un Indice de <span class="chiffres tabular-nums">71</span>.
+        </p>
+
         <div class="mt-12 bg-encre/[0.03] px-6 py-6">
           <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
             Votre rapport

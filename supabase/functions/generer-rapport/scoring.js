@@ -23,6 +23,30 @@ import {
 
 const IDS_QUESTIONS = Object.keys(COEFFICIENTS)
 
+/*
+  Constante de conversion Indice → jours (note d'audit du 3 août 2026, §5.2).
+
+  La formule d'origine `3 × e^(I/21)` plafonnait à 350,91 jours : la clause
+  « plafonné à 365 » n'était jamais atteinte (code mort, défaut n°4), et
+  l'Indice 100 ne pouvait pas produire « une année entière ».
+
+  Le recalibrage ancre exactement les deux bornes : Indice 0 → 3 jours,
+  Indice 100 → 365 jours. Aucun plafond n'est nécessaire, la formule ne peut
+  mathématiquement pas dépasser 365.
+*/
+const K_JOURS = Math.log(365 / 3) / 100
+
+/**
+ * Arrondi commercial : la demie s'arrondit toujours vers le haut (audit §6.1).
+ *
+ * `Math.round()` de JavaScript arrondit -0,5 vers 0 et non vers le bas. Sur ce
+ * domaine (valeurs positives) le comportement est identique, mais on utilise
+ * `floor(x + 0,5)` pour rester strictement conforme à la règle opposable.
+ */
+export function arrondiCommercial(x) {
+  return Math.floor(x + 0.5)
+}
+
 /**
  * Convertit le tableau d'index reçu du front en points par question.
  * @param {number[]} indexReponses - 18 entiers, chacun entre 0 et 4
@@ -69,15 +93,23 @@ export function normaliserAxes(bruts) {
 export function calculerIndice90(axes) {
   const brut =
     AXES_CONFIG.A1.poids * axes.A1 + AXES_CONFIG.A2.poids * axes.A2 + AXES_CONFIG.A3.poids * axes.A3
-  return Math.round(brut)
+  return arrondiCommercial(brut)
 }
 
 /**
- * JOURS = arrondi(3 × e^(INDICE90 / 21)), plafonné à 365 (spec §9.1).
- * La courbe est exponentielle et non linéaire — voir spec §9.3.
+ * JOURS = arrondi_commercial( 3 × e^(K × INDICE90) ), K = ln(365/3)/100.
+ * Note d'audit du 3 août 2026, §5.2 — remplace `3 × e^(I/21)`.
+ *
+ * L'Indice DOIT être l'entier déjà arrondi (audit §6.2) : c'est ce qui garantit
+ * que le score affiché et le nombre de jours affiché sont cohérents entre eux.
+ *
+ * Aucun plafond : la formule atteint exactement 365 à l'Indice 100.
  */
 export function calculerJours(indice90) {
-  return Math.min(365, Math.round(3 * Math.exp(indice90 / 21)))
+  if (!Number.isInteger(indice90) || indice90 < 0 || indice90 > 100) {
+    throw new Error(`Indice invalide : entier 0-100 attendu, reçu ${indice90}`)
+  }
+  return arrondiCommercial(3 * Math.exp(K_JOURS * indice90))
 }
 
 /**
@@ -137,17 +169,20 @@ export function determinerNiveau(indice90) {
 }
 
 /**
- * L'archétype croisé (spec §10.2).
+ * L'archétype croisé — les HUIT combinaisons (note d'audit du 3 août 2026, §7.4).
  *
- * Le document ne nomme que 6 des 8 combinaisons possibles. Les deux manquantes —
- * faible/fort/fort et fort/faible/fort — sont rattachées ici à l'archétype le plus
- * proche par l'axe déficient, en attendant l'arbitrage du manager (todo.md, question 9).
- * Le champ `provisoire` les signale explicitement pour qu'elles ne passent pas inaperçues.
+ * Les archétypes 7 et 8 étaient absents de la spécification d'origine. Ils sont
+ * désormais rédigés et implémentés : aucun rattachement par défaut ne subsiste.
+ *
+ * Le rattachement provisoire précédent produisait un diagnostic FAUX (audit §7.2) :
+ * il affirmait à un dirigeant dont l'Axe 3 est fort qu'il ne va pas bien.
+ *
+ * Seuil : un axe est FORT si son score arrondi est ≥ 50 (audit §6.3).
  */
 export function determinerArchetype(axes) {
-  const f1 = axes.A1 >= SEUIL_AXE
-  const f2 = axes.A2 >= SEUIL_AXE
-  const f3 = axes.A3 >= SEUIL_AXE
+  const f1 = arrondiCommercial(axes.A1) >= SEUIL_AXE
+  const f2 = arrondiCommercial(axes.A2) >= SEUIL_AXE
+  const f3 = arrondiCommercial(axes.A3) >= SEUIL_AXE
   const cle = `${f1 ? 'F' : 'f'}${f2 ? 'F' : 'f'}${f3 ? 'F' : 'f'}`
 
   const table = {
@@ -161,20 +196,12 @@ export function determinerArchetype(axes) {
     Fff: { numero: 4, id: 'processus_hommes', nom: "Les processus tiennent, les hommes s'usent" },
     FFf: { numero: 5, id: 'entreprise_prete', nom: "L'entreprise est prête, vous ne l'êtes pas" },
     FFF: { numero: 6, id: 'actif_transferable', nom: "L'actif transférable" },
-
-    // Combinaisons non couvertes par la spécification — rattachement provisoire.
     fFF: {
-      numero: 3,
-      id: 'equipe_sans_place',
-      nom: "L'équipe existe, la place ne s'est pas libérée",
-      provisoire: true,
+      numero: 7,
+      id: 'hommes_sans_machine',
+      nom: "Les hommes sont là, la machine n'est pas construite",
     },
-    FfF: {
-      numero: 4,
-      id: 'processus_hommes',
-      nom: "Les processus tiennent, les hommes s'usent",
-      provisoire: true,
-    },
+    FfF: { numero: 8, id: 'structure_sans_porteur', nom: 'La structure tient, personne ne la porte' },
   }
 
   return { ...table[cle], combinaison: cle }
@@ -207,17 +234,27 @@ export function calculerResultat(indexReponses) {
   const points = indexVersPoints(indexReponses)
   const bruts = calculerAxesBruts(points)
   const axes = normaliserAxes(bruts)
-  const indice90 = calculerIndice90(axes)
   const scoresSD = scorerSousDimensions(points)
   const protocole = protocoleSecuriteActif(points)
+
+  /*
+    Ordre des opérations (note d'audit §6.2 — défaut critique).
+
+    L'Indice est arrondi à l'entier IMMÉDIATEMENT après son calcul, et toutes les
+    opérations en aval — niveau, jours, routage — utilisent exclusivement cet entier.
+
+    Sans cette règle, un Indice de 25,6 ne tombait dans aucun niveau : supérieur à
+    25 et inférieur à 26, les bornes n'étant contiguës que pour des entiers.
+  */
+  const indice90 = calculerIndice90(axes)
 
   return {
     indice90,
     jours: calculerJours(indice90),
     axes: {
-      A1: Math.round(axes.A1),
-      A2: Math.round(axes.A2),
-      A3: Math.round(axes.A3),
+      A1: arrondiCommercial(axes.A1),
+      A2: arrondiCommercial(axes.A2),
+      A3: arrondiCommercial(axes.A3),
     },
     axesBruts: bruts,
     sousDimensions: scoresSD,

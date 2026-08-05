@@ -14,13 +14,62 @@
 | **Phases terminées** | Phase 0 ✅ · 2 ✅ · 3 ✅ · 4 ✅ · 5 ✅ · 6 ✅ · 7 ✅ · 8 ✅ · 9bis ✅ · 9ter ✅ |
 | **Tâche courante** | *(aucune — en attente de reprise)* |
 | **Prochaine tâche** | Recette manuelle par l'utilisateur → voir **§ PARCOURS DE TEST** en bas |
-| **Dernière mise à jour** | 4 août 2026 |
+| **Dernière mise à jour** | 5 août 2026 |
+| **⚙️ Moteur de calcul** | ✅ **Corrigé selon la note d'audit du 3 août 2026** — 11 défauts traités, 101 valeurs de référence testées (voir § AUDIT ci-dessous) |
 | **Prochain jalon** | Déploiement Vercel (Phase 10) |
 | **Chaîne complète** | ✅ **Fonctionne de bout en bout** : parcours → score → PDF → email |
 | **Supabase** | ✅ Projet `TEST DES 90 JOURS` — 4 tables, RLS testée, Edge Function déployée |
 | **Parcours** | ✅ Jouable de bout en bout : accueil → capture → 18 écrans → profil → score |
 | **Back-office** | ✅ `/admin` — récapitulatif de tous les tests + détail par profil, protégé par mot de passe |
 | **🔴 RGPD** | **NON FAIT — bloquant.** Aucune case de consentement, aucune politique de confidentialité. Détail en Phase 9 (§9.8-9.9). |
+
+---
+
+## 🔧 AUDIT DU CABINET — CORRECTIONS DU MOTEUR (5 août 2026)
+
+> Source : `rapport-10-audit-correction-test-90-jours.md` (note du 3 août 2026) +
+> `fixture-indice90.xlsx` (101 valeurs de référence).
+> **Cette note prévaut sur les sections 9, 10 et 14 de la spécification.**
+
+Le cabinet a confirmé mes 5 constats et en a trouvé 6 autres, dont 3 auraient produit des
+résultats faux en production.
+
+- [x] **A.1** Formule recalibrée `3 × (365/3)^(I/100)` — remplace `3 × e^(I/21)`
+      → *Preuve : les 101 valeurs du fixture reproduites exactement, 0 écart.*
+- [x] **A.2** Arrondi commercial `floor(x+0,5)` sur l'Indice, les axes et les jours
+      → *Preuve : test `arrondiCommercial(0.5) === 1`, `(2.5) === 3`.*
+- [x] **A.3** Indice arrondi **avant** niveau/jours/archétype (défaut critique n°6)
+      → *Preuve : `calculerJours()` lève une erreur sur un décimal ; les 101 Indices tombent chacun dans un niveau.*
+- [x] **A.4** Clause « plafonné à 365 » supprimée — code mort, jamais atteignable
+      → *Preuve : Indice 0 → 3 jours, Indice 100 → 365 jours exactement.*
+- [x] **A.5** Seuil axe : FORT si score arrondi ≥ 50 (le cas 50,0 était non tranché)
+      → *Preuve : test du cas « 12 points bruts sur 24 = 50,0 exactement ».*
+- [x] **A.6** Archétypes 7 et 8 implémentés — plus aucun rattachement par défaut
+      → *Preuve : les 8 combinaisons produisent 8 numéros distincts, `provisoire` absent partout.*
+- [x] **A.7** Protocole de détresse : décompte de signaux (≥3 ET Q15≤1)
+      → *Preuve : taux de déclenchement mesuré 0,32 % → 14,08 % sur les 625 combinaisons.*
+- [x] **A.8** Textes définitifs des archétypes 7 et 8 + 3 actions chacun (page 8)
+      → *Preuve : `ACTIONS_PAR_ARCHETYPE` compte 8 entrées de 3 actions.*
+- [x] **A.9** Mention « Indice 90 ≠ 90 jours, seuil franchi à l'Indice 71 » (audit §5.4)
+      → *Preuve : présente sur l'écran de résultat et en page 3 du PDF.*
+- [x] **A.10** Jeu de référence versionné en `tests/fixtures/fixture-indice90.csv`
+      → *Preuve : chargé et testé automatiquement — contrôle n°1 du protocole de recette.*
+- [x] **A.11** 8 exemplaires de PDF régénérés (un par archétype réel)
+      → *Preuve : `exemplaires-pdf/01-…` à `08-…`, aucun suffixe « provisoire ».*
+
+**Résultat : 222 tests passent** (122 avant l'audit — les 101 valeurs de référence sont
+désormais verrouillées).
+
+### Reste en attente d'information du cabinet
+
+- [!] **A.12** Tranches CA/effectif révisées (180 M / 6 au lieu de 300 M / 10)
+      → *Bloqué : les tranches du formulaire n'ont pas de borne à 180 M ni à 6 personnes.
+      Nécessite la spécification finale du 2 août, que nous n'avons pas reçue.*
+- [ ] **A.13** Module **Regard Croisé** — 18 questions miroir, invitations, Indice d'Écart,
+      rapport comparatif de 6 pages. Le manager le veut **séparé** du parcours principal,
+      comme second point de contact commercial. Fonctionnalité entière, à cadrer.
+- [ ] **A.14** Journalisation des accès au back-office + cloisonnement des profils marqués
+      « vigilance » (audit §12 — données personnelles sensibles).
 
 ---
 

@@ -1,0 +1,102 @@
+indice90,jours_autonomie,niveau
+0,3,Point de defaillance unique
+1,3,Point de defaillance unique
+2,3,Point de defaillance unique
+3,3,Point de defaillance unique
+4,4,Point de defaillance unique
+5,4,Point de defaillance unique
+6,4,Point de defaillance unique
+7,4,Point de defaillance unique
+8,4,Point de defaillance unique
+9,5,Point de defaillance unique
+10,5,Point de defaillance unique
+11,5,Point de defaillance unique
+12,5,Point de defaillance unique
+13,6,Point de defaillance unique
+14,6,Point de defaillance unique
+15,6,Point de defaillance unique
+16,6,Point de defaillance unique
+17,7,Point de defaillance unique
+18,7,Point de defaillance unique
+19,7,Point de defaillance unique
+20,8,Point de defaillance unique
+21,8,Point de defaillance unique
+22,9,Point de defaillance unique
+23,9,Point de defaillance unique
+24,9,Point de defaillance unique
+25,10,Point de defaillance unique
+26,10,Centre nevralgique
+27,11,Centre nevralgique
+28,12,Centre nevralgique
+29,12,Centre nevralgique
+30,13,Centre nevralgique
+31,13,Centre nevralgique
+32,14,Centre nevralgique
+33,15,Centre nevralgique
+34,15,Centre nevralgique
+35,16,Centre nevralgique
+36,17,Centre nevralgique
+37,18,Centre nevralgique
+38,19,Centre nevralgique
+39,20,Centre nevralgique
+40,20,Centre nevralgique
+41,21,Centre nevralgique
+42,23,Centre nevralgique
+43,24,Centre nevralgique
+44,25,Centre nevralgique
+45,26,Centre nevralgique
+46,27,Transition inachevee
+47,29,Transition inachevee
+48,30,Transition inachevee
+49,32,Transition inachevee
+50,33,Transition inachevee
+51,35,Transition inachevee
+52,36,Transition inachevee
+53,38,Transition inachevee
+54,40,Transition inachevee
+55,42,Transition inachevee
+56,44,Transition inachevee
+57,46,Transition inachevee
+58,49,Transition inachevee
+59,51,Transition inachevee
+60,53,Transition inachevee
+61,56,Transition inachevee
+62,59,Transition inachevee
+63,62,Structure emergente
+64,65,Structure emergente
+65,68,Structure emergente
+66,71,Structure emergente
+67,75,Structure emergente
+68,79,Structure emergente
+69,82,Structure emergente
+70,86,Structure emergente
+71,91,Structure emergente
+72,95,Structure emergente
+73,100,Structure emergente
+74,105,Structure emergente
+75,110,Structure emergente
+76,115,Structure emergente
+77,121,Structure emergente
+78,127,Structure emergente
+79,133,Structure emergente
+80,140,Structure emergente
+81,147,Entreprise transferable
+82,154,Entreprise transferable
+83,161,Entreprise transferable
+84,169,Entreprise transferable
+85,178,Entreprise transferable
+86,186,Entreprise transferable
+87,196,Entreprise transferable
+88,205,Entreprise transferable
+89,215,Entreprise transferable
+90,226,Entreprise transferable
+91,237,Entreprise transferable
+92,249,Entreprise transferable
+93,261,Entreprise transferable
+94,274,Entreprise transferable
+95,287,Entreprise transferable
+96,301,Entreprise transferable
+97,316,Entreprise transferable
+98,332,Entreprise transferable
+99,348,Entreprise transferable
+100,365,Entreprise transferable

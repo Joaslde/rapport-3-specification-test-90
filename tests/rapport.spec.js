@@ -237,8 +237,12 @@ describe('Page 8 — règle de proportion (spec §12.2)', () => {
     })
   })
 
-  it('définit des actions pour les six archétypes', () => {
-    expect(Object.keys(ACTIONS_PAR_ARCHETYPE)).toHaveLength(6)
+  it('définit des actions pour les huit archétypes (audit du 3 août 2026, §7.5)', () => {
+    expect(Object.keys(ACTIONS_PAR_ARCHETYPE)).toHaveLength(8)
+    // Trois actions par archétype, sans exception.
+    for (const actions of Object.values(ACTIONS_PAR_ARCHETYPE)) {
+      expect(actions).toHaveLength(3)
+    }
   })
 
   it('garde la vente très minoritaire dans le volume total', () => {

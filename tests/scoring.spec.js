@@ -5,10 +5,13 @@
 */
 
 import { describe, it, expect } from 'vitest'
+import fs from 'node:fs'
+import path from 'node:path'
 import {
   indexVersPoints,
   calculerAxesBruts,
   calculerJours,
+  arrondiCommercial,
   scorerSousDimensions,
   identifierForces,
   identifierFragilites,
@@ -19,6 +22,25 @@ import {
   genererBlocsScenario,
   calculerResultat,
 } from '../supabase/functions/_shared/scoring.js'
+
+/**
+ * Charge le jeu de référence des 101 valeurs (note d'audit du 3 août 2026, §10).
+ * Ce fichier est opposable : il a été généré par le calcul, jamais saisi à la main.
+ */
+function chargerFixture() {
+  const csv = fs.readFileSync(
+    path.join(import.meta.dirname, 'fixtures/fixture-indice90.csv'),
+    'utf8',
+  )
+  return csv
+    .trim()
+    .split('\n')
+    .slice(1)
+    .map((ligne) => {
+      const [indice90, jours, niveau] = ligne.split(',')
+      return { indice90: Number(indice90), jours: Number(jours), niveau }
+    })
+}
 
 /** Construit un jeu de 18 réponses, toutes à la même valeur. */
 const toutes = (v) => Array(18).fill(v)
@@ -85,49 +107,79 @@ describe('Bornes de l’Indice 90', () => {
   })
 })
 
-describe('Conversion score → jours (spec §9.1)', () => {
+describe('Conversion score → jours — jeu de référence opposable', () => {
   /*
-    ⚠️ La formule de la spec §9.1 et la table de la spec §9.2 divergent sur 3 valeurs :
-         I=30  → formule 12,518 → 13   (table : 12 — troncature au lieu d'arrondi)
-         I=90  → formule 217,963 → 218 (table : 217 — idem)
-         I=100 → formule 350,906 → 351 (table : 365 — la table force l'année pleine)
+    Note d'audit du 3 août 2026, §10 et §13 (protocole de recette, contrôle n°1).
 
-    Arbitrage utilisateur : LA FORMULE FAIT AUTORITÉ. La table §9.2 devient indicative.
-    Point signalé au manager. Voir docs/lessons.md.
+    La formule est désormais `3 × (365/3)^(I/100)`, avec arrondi commercial.
+    Elle remplace `3 × e^(I/21)`, qui plafonnait à 350,91 jours et rendait la
+    clause « plafonné à 365 » inatteignable (code mort, défaut n°4).
+
+    Le fichier fixture-indice90.csv contient les 101 valeurs de référence,
+    générées par le calcul et non écrites à la main. Il fait foi :
+    « Toute implémentation doit reproduire ces 101 valeurs exactement. »
   */
-  const table = [
-    [10, 5],
-    [20, 8],
-    [30, 13],
-    [40, 20],
-    [50, 32],
-    [60, 52],
-    [70, 84],
-    [80, 135],
-    [90, 218],
-    [100, 351],
-  ]
+  const REFERENCE = chargerFixture()
 
-  it.each(table)('un Indice de %i donne %i jours', (indice, joursAttendus) => {
-    expect(calculerJours(indice)).toBe(joursAttendus)
+  it('contient bien les 101 valeurs de référence', () => {
+    expect(REFERENCE).toHaveLength(101)
   })
 
-  it('reste à 1 jour près de la table publiée sur la plage réellement observée', () => {
-    // La distribution attendue des répondants se situe entre 25 et 55 (spec §9.3).
-    const publiees = { 30: 12, 40: 20, 50: 32 }
-    for (const [indice, jours] of Object.entries(publiees)) {
-      expect(Math.abs(calculerJours(Number(indice)) - jours)).toBeLessThanOrEqual(1)
-    }
+  it.each(REFERENCE.map((r) => [r.indice90, r.jours]))(
+    'un Indice de %i donne %i jours',
+    (indice, joursAttendus) => {
+      expect(calculerJours(indice)).toBe(joursAttendus)
+    },
+  )
+
+  it('ancre exactement les deux bornes (audit §13, contrôle n°2)', () => {
+    expect(calculerJours(0)).toBe(3)
+    expect(calculerJours(100)).toBe(365)
   })
 
-  it('plafonne à 365 jours', () => {
-    expect(calculerJours(120)).toBe(365)
+  it('franchit le seuil des 90 jours à un Indice de 71 (audit §5.4)', () => {
+    expect(calculerJours(70)).toBeLessThan(90)
+    expect(calculerJours(71)).toBeGreaterThanOrEqual(90)
+  })
+
+  it('refuse un Indice non entier ou hors bornes (audit §6.2)', () => {
+    expect(() => calculerJours(25.6)).toThrow('Indice invalide')
+    expect(() => calculerJours(-1)).toThrow('Indice invalide')
+    expect(() => calculerJours(101)).toThrow('Indice invalide')
   })
 
   it('est strictement croissante', () => {
     for (let i = 1; i <= 100; i++) {
       expect(calculerJours(i)).toBeGreaterThanOrEqual(calculerJours(i - 1))
     }
+  })
+})
+
+describe('Arrondi commercial (audit §6.1)', () => {
+  it('arrondit toujours la demie vers le haut', () => {
+    expect(arrondiCommercial(0.5)).toBe(1)
+    expect(arrondiCommercial(1.5)).toBe(2)
+    expect(arrondiCommercial(2.5)).toBe(3)
+    expect(arrondiCommercial(2.4999)).toBe(2)
+  })
+})
+
+describe("Ordre des opérations — l'Indice est arrondi avant tout (audit §6.2)", () => {
+  it('produit toujours un Indice entier, jamais décimal', () => {
+    for (let v = 0; v <= 4; v++) {
+      expect(Number.isInteger(calculerResultat(toutes(v)).indice90)).toBe(true)
+    }
+  })
+
+  it('fait tomber les 101 Indices dans exactement un niveau (audit §13, contrôle n°5)', () => {
+    for (let i = 0; i <= 100; i++) {
+      expect(determinerNiveau(i)).toBeDefined()
+    }
+  })
+
+  it('garde le score affiché et les jours affichés cohérents entre eux', () => {
+    const r = calculerResultat(reponses({ Q1: 3, Q7: 1, Q12: 4 }))
+    expect(r.jours).toBe(calculerJours(r.indice90))
   })
 })
 
@@ -148,7 +200,7 @@ describe('Les cinq niveaux (spec §10.1)', () => {
   })
 })
 
-describe('Les six archétypes (spec §10.2)', () => {
+describe('Les huit archétypes (spec §10.2 + audit du 3 août 2026, §7.4)', () => {
   it('identifie la convergence — les trois axes faibles', () => {
     const a = determinerArchetype({ A1: 20, A2: 20, A3: 20 })
     expect(a.numero).toBe(1)
@@ -175,20 +227,48 @@ describe('Les six archétypes (spec §10.2)', () => {
     expect(determinerArchetype({ A1: 80, A2: 80, A3: 80 }).numero).toBe(6)
   })
 
-  it('applique le seuil de 50 comme borne inférieure du fort', () => {
-    // 50 est fort, 49 est faible.
+  it('applique le seuil de 50 comme borne inférieure du fort (audit §6.3)', () => {
+    // Un axe à exactement 50,0 est FORT (audit §13, contrôle n°7).
     expect(determinerArchetype({ A1: 50, A2: 50, A3: 50 }).numero).toBe(6)
     expect(determinerArchetype({ A1: 49, A2: 49, A3: 49 }).numero).toBe(1)
   })
 
-  it('marque comme provisoires les deux combinaisons absentes de la spec', () => {
-    expect(determinerArchetype({ A1: 20, A2: 80, A3: 80 }).provisoire).toBe(true)
-    expect(determinerArchetype({ A1: 80, A2: 20, A3: 80 }).provisoire).toBe(true)
+  it("classe FORT un axe à exactement 50,0 — cas des 12 points bruts sur 24", () => {
+    // Cas concret cité par l'audit : un Axe 3 à 12/24 donne exactement 50,0.
+    expect(determinerArchetype({ A1: 20, A2: 20, A3: 50 }).numero).toBe(2)
   })
 
-  it('ne marque pas provisoires les six archétypes documentés', () => {
-    expect(determinerArchetype({ A1: 20, A2: 20, A3: 20 }).provisoire).toBeUndefined()
-    expect(determinerArchetype({ A1: 80, A2: 80, A3: 80 }).provisoire).toBeUndefined()
+  /*
+    Les archétypes 7 et 8 — note d'audit du 3 août 2026, §7.
+    Le rattachement provisoire précédent produisait un diagnostic FAUX : il
+    affirmait à un dirigeant dont l'Axe 3 est fort qu'il ne va pas bien.
+  */
+  it("identifie les hommes sans machine — A1 faible, A2 et A3 forts", () => {
+    const a = determinerArchetype({ A1: 20, A2: 80, A3: 80 })
+    expect(a.numero).toBe(7)
+    expect(a.id).toBe('hommes_sans_machine')
+  })
+
+  it('identifie la structure sans porteur — A2 faible, A1 et A3 forts', () => {
+    const a = determinerArchetype({ A1: 80, A2: 20, A3: 80 })
+    expect(a.numero).toBe(8)
+    expect(a.id).toBe('structure_sans_porteur')
+  })
+
+  it('couvre les huit combinaisons sans rattachement par défaut (audit §13, contrôle n°6)', () => {
+    const numeros = new Set()
+    for (const A1 of [20, 80]) {
+      for (const A2 of [20, 80]) {
+        for (const A3 of [20, 80]) {
+          const a = determinerArchetype({ A1, A2, A3 })
+          expect(a.id).toBeDefined()
+          expect(a.provisoire).toBeUndefined()
+          numeros.add(a.numero)
+        }
+      }
+    }
+    // Huit combinaisons, huit archétypes DISTINCTS.
+    expect(numeros.size).toBe(8)
   })
 })
 
@@ -228,26 +308,45 @@ describe('Détection d’incohérences (spec §11.1)', () => {
   })
 })
 
-describe('Protocole de sécurité (spec §14)', () => {
-  // Déclencheur : Q15=0 ET Q14=0 ET Q16<=1 ET Q13=0
+describe('Protocole de sécurité (audit du 3 août 2026, §8.3)', () => {
+  /*
+    Règle corrigée : DÉCLENCHEMENT si SIGNAUX ≥ 3 ET Q15 ≤ 1.
+
+    L'ancienne conjonction (Q15=0 ET Q14=0 ET Q16≤1 ET Q13=0) ne se déclenchait
+    que dans 0,32 % des cas — elle ne protégeait personne (audit §8.2).
+  */
   const detresse = reponses({ Q15: 0, Q14: 0, Q16: 0, Q13: 0 })
 
-  it('se déclenche quand les quatre conditions sont réunies', () => {
+  it('se déclenche quand les quatre signaux sont réunis', () => {
     expect(calculerResultat(detresse).protocoleSecurite).toBe(true)
   })
 
-  it('accepte Q16 = 1 (soulagement immédiat) comme déclencheur', () => {
+  it('accepte Q16 = 1 (soulagement immédiat) comme signal', () => {
     const r = reponses({ Q15: 0, Q14: 0, Q16: 1, Q13: 0 })
     expect(calculerResultat(r).protocoleSecurite).toBe(true)
   })
 
-  it('ne se déclenche pas si une seule condition manque', () => {
-    const r = reponses({ Q15: 0, Q14: 0, Q16: 0, Q13: 1 })
+  it('détecte désormais le cas qui échappait à l’ancienne règle (audit §8.2)', () => {
+    /*
+      Le dirigeant qui présente cinq signaux physiques, aucun jour de repos en un
+      an, un vide à l'idée de vendre — mais qui a coché « mon conjoint » à Q13.
+      L'ancienne règle ne le détectait pas : il recevait le scénario de rupture
+      et entrait dans la séquence commerciale.
+    */
+    const r = reponses({ Q15: 0, Q14: 0, Q16: 0, Q13: 3 })
+    expect(calculerResultat(r).protocoleSecurite).toBe(true)
+  })
+
+  it('exige impérativement le signal physique Q15 (audit §8.3)', () => {
+    // Trois signaux sur quatre, mais sans signal physique : dirigeant surchargé,
+    // pas en danger. Le protocole ne doit pas se déclencher.
+    const r = reponses({ Q15: 4, Q14: 0, Q16: 0, Q13: 0 })
     expect(calculerResultat(r).protocoleSecurite).toBe(false)
   })
 
-  it('ne se déclenche pas si Q16 vaut 2 ou plus', () => {
-    const r = reponses({ Q15: 0, Q14: 0, Q16: 2, Q13: 0 })
+  it('ne se déclenche pas en dessous de trois signaux', () => {
+    // Q15 seul (signal physique), les trois autres au-dessus du seuil.
+    const r = reponses({ Q15: 0, Q14: 4, Q16: 4, Q13: 4 })
     expect(calculerResultat(r).protocoleSecurite).toBe(false)
   })
 

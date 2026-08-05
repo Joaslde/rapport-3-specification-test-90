@@ -406,6 +406,38 @@ de préfixe.
 > à une faille, vérifier que le test mesure bien ce qu'il prétend mesurer. Pour une vérification
 > de présence de fichier, utiliser une égalité exacte, jamais un préfixe.
 
+### [5 août 2026] — Une table de spécification recopiée au lieu d'être recalculée
+
+**Ce qui a mal tourné :**
+La table de conversion Indice → jours (spec §9.2) divergeait de la formule §9.1 sur 3 valeurs.
+J'avais signalé l'écart et tranché « la formule fait autorité ». L'audit du cabinet a montré que
+la conclusion était juste mais **insuffisante** : la formule elle-même était mal calibrée
+(plafond de 350,91 jours, donc clause « plafonné à 365 » inatteignable). Sept défauts
+supplémentaires que je n'avais pas vus, dont trois auraient produit des résultats faux en
+production.
+
+**Cause racine :**
+Je me suis arrêté à la contradiction visible (table vs formule) sans vérifier la **cohérence
+d'ensemble** : est-ce que la formule atteint bien ses bornes annoncées ? est-ce que l'ordre des
+opérations est spécifié ? est-ce que toutes les branches sont couvertes ? La question posée était
+« qui a raison » alors qu'elle aurait dû être « le système est-il complet ».
+
+**Correction appliquée :**
+Formule recalibrée sur ses deux bornes, arrondi commercial explicite, Indice arrondi avant toute
+opération aval, 8 archétypes au lieu de 6, protocole de détresse passé d'une conjonction (0,32 %
+de déclenchement) à un décompte de signaux (14 %). Les 101 valeurs de référence sont désormais un
+fichier CSV testé automatiquement.
+
+**Règle pour l'éviter :**
+> **L16 — Une incohérence trouvée dans une spécification est un symptôme, pas le bug.** Quand deux
+> parties d'un document se contredisent, ne pas se contenter d'arbitrer entre les deux : vérifier
+> l'ensemble du système autour (bornes atteintes, branches couvertes, ordre des opérations,
+> taux de déclenchement réels). Le défaut visible est rarement le seul.
+
+> **L17 — Aucune table numérique n'est recopiée à la main.** Toute table de référence est générée
+> par le calcul et livrée comme jeu de test exécutable. Règle imposée par le cabinet le
+> 3 août 2026, applicable à tous les documents du projet.
+
 <!--
 Modèle d'entrée :
 

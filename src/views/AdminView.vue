@@ -264,7 +264,6 @@ const NIVEAUX_LIBELLES = {
               <dt class="shrink-0 text-gristexte">Archétype</dt>
               <dd class="min-w-0 text-right break-words">
                 {{ detailOuvert.archetype_id }}
-                <span v-if="detailOuvert.archetype_provisoire" class="text-laiton">(provisoire)</span>
               </dd>
             </div>
             <div class="flex justify-between gap-4 border-b border-trait pb-2">

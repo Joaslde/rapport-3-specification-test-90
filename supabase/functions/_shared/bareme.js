@@ -177,14 +177,32 @@ export const CONTROLES_INCOHERENCE = [
 ]
 
 /**
- * Condition de déclenchement du protocole de sécurité (spec §14.1).
- * Quatre ou cinq signaux physiques, aucun jour de repos sur un an,
- * une réaction de vide ou de fuite à l'idée de vendre, et personne à qui parler.
+ * Condition de déclenchement du protocole de sécurité.
+ * Note d'audit du 3 août 2026, §8.3 — remplace la conjonction de la spec §14.1.
+ *
+ * L'ancienne règle exigeait QUATRE conditions simultanées, toutes à leur valeur
+ * la plus extrême : taux de déclenchement de 0,32 %, soit trois personnes sur
+ * mille. Elle ne protégeait personne (audit §8.2).
+ *
+ * Cas concret qui échappait à la détection : un dirigeant présentant cinq signaux
+ * physiques, aucun jour de repos en un an, un vide à l'idée de vendre — mais ayant
+ * coché « mon conjoint » à Q13. Il recevait le scénario de rupture et entrait dans
+ * la séquence commerciale. C'est exactement la personne à ne pas traiter ainsi.
+ *
+ * La condition sur Q15 reste OBLIGATOIRE : les signaux physiques sont le marqueur
+ * le plus fiable. Sans eux, trois signaux sur quatre décriraient un dirigeant
+ * surchargé, mais pas en danger.
  *
  * ⚠️ Cette condition ne doit JAMAIS être devinable depuis le front (docs/securite.md §9).
  */
 export function protocoleSecuriteActif(r) {
-  return r.Q15 === 0 && r.Q14 === 0 && r.Q16 <= 1 && r.Q13 === 0
+  let signaux = 0
+  if (r.Q15 <= 1) signaux += 1 // quatre ou cinq signaux physiques
+  if (r.Q14 <= 1) signaux += 1 // moins de cinq jours de repos sur un an
+  if (r.Q16 <= 1) signaux += 1 // vide ou fuite à l'idée de vendre
+  if (r.Q13 <= 1) signaux += 1 // aucun interlocuteur hors du cercle familial
+
+  return signaux >= 3 && r.Q15 <= 1
 }
 
 /** Matrice de génération du scénario de rupture (spec §13.2). */

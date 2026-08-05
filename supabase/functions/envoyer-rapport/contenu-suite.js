@@ -170,6 +170,58 @@ export const ACTIONS_PAR_ARCHETYPE = {
         'contrainte d’un événement.',
     },
   ],
+
+  /*
+    Archétypes 7 et 8 — note d'audit du 3 août 2026, §7.
+    Trois actions réellement applicables sans le cabinet (spec §12.2).
+  */
+  hommes_sans_machine: [
+    {
+      titre: 'Écrire les trois procédures les plus utilisées',
+      texte:
+        'Votre équipe est solide mais travaille sans support écrit. Choisissez les trois ' +
+        'opérations les plus fréquentes et faites-les documenter par ceux qui les exécutent, ' +
+        'pas par vous. Une page chacune suffit.',
+    },
+    {
+      titre: 'Ouvrir un deuxième accès bancaire et administratif',
+      texte:
+        'C’est la dépendance la plus rapide à lever et la plus coûteuse à ignorer. Ajoutez une ' +
+        'signature autorisée et un second interlocuteur déclaré auprès de vos administrations. ' +
+        'La démarche prend quelques jours.',
+    },
+    {
+      titre: 'Fixer une échéance pendant que tout va bien',
+      texte:
+        'Rien ne vous oblige aujourd’hui à traiter cette question — c’est précisément le ' +
+        'risque. Posez une date à trois mois pour vérifier ce qui aura été écrit et délégué, ' +
+        'et tenez-la comme un rendez-vous client.',
+    },
+  ],
+
+  structure_sans_porteur: [
+    {
+      titre: 'Identifier qui pourrait décider à votre place',
+      texte:
+        'Vos processus tiennent, mais aucun processus n’arbitre une situation inédite. ' +
+        'Nommez, même sans l’annoncer, la personne qui trancherait en votre absence. Si aucun ' +
+        'nom ne vient, c’est le résultat le plus important de ce test.',
+    },
+    {
+      titre: 'Confier un arbitrage réel, pas une exécution',
+      texte:
+        'Déléguer une tâche ne forme personne à diriger. Confiez une décision dont l’issue est ' +
+        'incertaine, avec le droit de se tromper, et n’intervenez pas. C’est le seul exercice ' +
+        'qui construit un second.',
+    },
+    {
+      titre: 'Organiser la contradiction',
+      texte:
+        'Personne ne vous contredit aujourd’hui. Demandez explicitement à deux collaborateurs ' +
+        'de préparer les arguments contre votre prochaine décision structurante. La qualité de ' +
+        'l’objection se travaille comme une compétence.',
+    },
+  ],
 }
 
 // ---------------------------------------------------------------------
@@ -206,6 +258,22 @@ export const BLOC_INCOHERENCE = {
 // ---------------------------------------------------------------------
 
 /** Critères durs d'éligibilité (spec §15.1). Paramétrable — voir todo.md question 6. */
+/*
+  Critères d'éligibilité au routage commercial.
+
+  ⚠️ EN ATTENTE D'ARBITRAGE — la note d'audit du 3 août 2026 (§2.1) indique que
+  les tranches ont été révisées à « 180 M / 6 personnes » dans la spécification
+  finale du 2 août, que nous n'avons pas reçue.
+
+  Les tranches actuelles du formulaire (src/data/profil.js) ne comportent pas de
+  borne à 180 M ni à 6 personnes : les paliers les plus proches seraient
+  `100_300M` et `5_9`, qui retiendraient aussi une entreprise à 100 M / 5
+  personnes — ce qui n'est pas ce que demande la note.
+
+  Les valeurs de la spécification du 30 juillet (300 M / 10) sont donc conservées
+  telles quelles jusqu'à réception de la spécification finale, qui doit préciser
+  les bornes exactes des tranches du formulaire.
+*/
 export const CRITERES_DURS = {
   chiffre_affaires: ['300M_1Md', '1_5Mds', 'plus_5Mds'],
   effectif: ['10_24', '25_49', '50_plus'],

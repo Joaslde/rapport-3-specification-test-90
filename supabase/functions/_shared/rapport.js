@@ -99,7 +99,9 @@ export function assemblerRapport({ resultat, identite, profil, barometre }) {
     archetype: {
       nom: archetype.nom,
       diagnostic: archetype.diagnostic,
-      provisoire: Boolean(r.archetype.provisoire),
+      // Les huit archétypes sont désormais rédigés : plus aucun rattachement
+      // par défaut ne subsiste (note d'audit du 3 août 2026, §7.4).
+      provisoire: false,
     },
     verdict: archetype.verdict,
     // Le bloc d'incohérence : « le plus fort effet de crédibilité du rapport ».
@@ -128,6 +130,18 @@ export function assemblerRapport({ resultat, identite, profil, barometre }) {
         .map(([sd, d]) => ({ id: sd, libelle: d.libelle, lecture: d.lecture })),
     })),
     benchmark: formulerBenchmark(barometre),
+
+    /*
+      Distinction Indice 90 / 90 jours — note d'audit du 3 août 2026, §5.4.
+      Avec la formule corrigée, les 90 jours sont atteints à un Indice de 71,
+      et non de 90. « Un prospect attentif le remarquera. Il faut donc le dire
+      avant lui, en une ligne. »
+    */
+    noteIndice:
+      "L'Indice 90 porte le nom du seuil qu'il mesure : les 90 jours — un trimestre, soit un " +
+      "quart d'année. Un Indice de 90 sur 100 ne signifie pas 90 jours : il signifie que votre " +
+      'entreprise dépasse très largement ce seuil. Le seuil des 90 jours est franchi à partir ' +
+      "d'un Indice de 71.",
   }
 
   // ---- Page 4 — Vos trois forces -------------------------------------
@@ -239,7 +253,7 @@ export function assemblerRapport({ resultat, identite, profil, barometre }) {
       nomFichier: nomFichierRapport(identite.prenom),
       protocoleSecurite: protocole,
       scenarioOmis: !scenario,
-      archetypeProvisoire: Boolean(r.archetype.provisoire),
+      archetypeProvisoire: false,
       orientationId: orientation.id,
       prioriteCommerciale: orientation.priorite,
       nbPages: pages.length,

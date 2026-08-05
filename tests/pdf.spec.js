@@ -110,7 +110,13 @@ describe('Génération du PDF', () => {
   })
 
   it('génère 8 pages sur un profil normal', async () => {
-    const r = rapport(r18({ Q1: 1, Q2: 0, Q5: 1 }, 1))
+    /*
+      Entreprise très dépendante (le scénario de rupture se déclenche donc),
+      mais dirigeant qui va bien — sinon le protocole de sécurité supprime
+      la page 7 et le rapport n'en compte plus que 7 (audit §8.3).
+    */
+    const r = rapport(r18({ Q1: 1, Q2: 0, Q5: 1, Q13: 3, Q14: 3, Q15: 3, Q16: 3 }, 1))
+    expect(r.meta.protocoleSecurite).toBe(false)
     expect(r.pages).toHaveLength(8)
     const octets = await genererPDF(r)
     expect(octets.length).toBeGreaterThan(5000)
