@@ -14,14 +14,42 @@
 | **Phases terminées** | Phase 0 ✅ · 2 ✅ · 3 ✅ · 4 ✅ · 5 ✅ · 6 ✅ · 7 ✅ · 8 ✅ · 9bis ✅ · 9ter ✅ |
 | **Tâche courante** | *(aucune — en attente de reprise)* |
 | **Prochaine tâche** | Recette manuelle par l'utilisateur → voir **§ PARCOURS DE TEST** en bas |
-| **Dernière mise à jour** | 5 août 2026 |
+| **Dernière mise à jour** | 6 août 2026 |
 | **⚙️ Moteur de calcul** | ✅ **Corrigé selon la note d'audit du 3 août 2026** — 11 défauts traités, 101 valeurs de référence testées (voir § AUDIT ci-dessous) |
+| **✍️ Signature du rapport** | ✅ **B1 définitivement clos** — Charbel ZOHOUN, Directeur, Cabinet Le Quart. Précision du manager le 6 août : « signer » = désigner et authentifier la personne, pas une image manuscrite. Filigrane « document provisoire » retiré. |
 | **Prochain jalon** | Déploiement Vercel (Phase 10) |
 | **Chaîne complète** | ✅ **Fonctionne de bout en bout** : parcours → score → PDF → email |
 | **Supabase** | ✅ Projet `TEST DES 90 JOURS` — 4 tables, RLS testée, Edge Function déployée |
 | **Parcours** | ✅ Jouable de bout en bout : accueil → capture → 18 écrans → profil → score |
 | **Back-office** | ✅ `/admin` — récapitulatif de tous les tests + détail par profil, protégé par mot de passe |
 | **🔴 RGPD** | **NON FAIT — bloquant.** Aucune case de consentement, aucune politique de confidentialité. Détail en Phase 9 (§9.8-9.9). |
+
+---
+
+## 📞 RETOUR ORAL DU MANAGER — 6 août 2026
+
+Après relecture des PDF d'exemple envoyés. Validation générale : *« la présentation est
+simple, comme je souhaite, c'est clair, c'est bien. »*
+
+- [x] **R.1** Signature réelle intégrée — Charbel ZOHOUN, Directeur, Cabinet Le Quart
+      → *Preuve : `SIGNATURE` dans `contenu-suite.js`, 222 tests toujours au vert, 8 PDF
+      d'exemple régénérés avec la vraie signature.*
+- [x] **R.2** Nom de l'entreprise du répondant — confirmé déjà présent en page 1 du PDF
+      depuis le début du projet, aucune action nécessaire.
+- [x] **R.3** Signature graphique — **abandonnée, sans objet.** Précision du manager :
+      « signer » signifiait désigner et authentifier la personne responsable, pas apposer une
+      image manuscrite ou numérique — ce rapport n'est pas un contrat. Filigrane
+      « document provisoire » retiré du PDF (couverture et page 8).
+      → *Preuve : `SIGNATURE.provisoire = false`, test PDF vérifie l'absence du mot
+      « provisoire » et la présence de « Charbel ZOHOUN », 222 tests au vert.*
+- [!] **R.4** Logo du cabinet — **bloqué**, pas encore prêt côté cabinet. Emplacements
+      proposés (en-tête + couverture PDF) dans `docs/a-remonter-au-manager.md`, section
+      B1ter. Intégration rapide dès réception.
+- [!] **R.5** Lien de prise de rendez-vous en page 8 — **bloqué**, en attente de l'URL de
+      réservation. Emplacement technique déjà identifié (`rendreSuite()` dans
+      `pdf-rapport.js`). Intégration rapide dès réception.
+- [ ] **R.6** Site internet du cabinet — le manager y travaille le week-end du 8-9 août,
+      transmettra le plan pour retour avant développement.
 
 ---
 

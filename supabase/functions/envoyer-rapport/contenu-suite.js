@@ -373,13 +373,16 @@ export function routerCommercial({ indice90, protocoleSecurite, profil }) {
 }
 
 // ---------------------------------------------------------------------
-// SIGNATURE — temporaire, explicitement marquée comme telle
-// La spec §16.3 exige « un nom et une fonction réels, pas L'équipe ».
-// À remplacer avant la mise en ligne (todo.md, question 7).
+// SIGNATURE — nom et fonction réels communiqués par le cabinet le 6 août 2026.
+// La spec §16.3 exige « un nom et une fonction réels, pas L'équipe ». Rempli.
+//
+// Précision du manager le 6 août : « signer » signifiait désigner et
+// authentifier la personne responsable, pas apposer une image de signature
+// manuscrite ou numérique — ce rapport n'est pas un contrat. Point clos,
+// filigrane « document provisoire » retiré.
 // ---------------------------------------------------------------------
 export const SIGNATURE = {
-  provisoire: true,
-  nom: '[Nom du signataire à définir]',
-  fonction: '[Fonction à définir]',
-  mention: 'Signature provisoire — à remplacer avant la mise en ligne.',
+  provisoire: false,
+  nom: 'Charbel ZOHOUN',
+  fonction: 'Directeur\nCabinet Le Quart',
 }

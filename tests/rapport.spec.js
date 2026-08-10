@@ -320,9 +320,12 @@ describe('Benchmark — ne jamais inventer (spec §17.1)', () => {
 })
 
 describe('Signature (spec §16.3)', () => {
-  it('est marquée comme provisoire et jamais « L’équipe »', () => {
+  it('porte un nom et une fonction réels, jamais « L’équipe » ni « provisoire »', () => {
+    // Retour oral du manager du 6 août 2026 : Charbel ZOHOUN, Directeur, Cabinet
+    // Le Quart. Le point est clos — plus de filigrane « document provisoire ».
     const s = rapportPour(reponses()).pages.at(-1).signature
-    expect(s.provisoire).toBe(true)
+    expect(s.provisoire).toBe(false)
+    expect(s.nom).toBe('Charbel ZOHOUN')
     expect(s.nom.toLowerCase()).not.toContain('équipe')
   })
 })

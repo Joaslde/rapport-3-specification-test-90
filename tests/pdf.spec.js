@@ -201,9 +201,12 @@ describe('Contenu du PDF', () => {
     expect(texte).toContain(String(r.pages[0].jours))
   })
 
-  it('marque la signature comme provisoire', async () => {
+  it('affiche le nom et la fonction réels du signataire, jamais « provisoire »', async () => {
+    // Retour oral du manager du 6 août 2026 : signature = désigner et
+    // authentifier la personne, pas une image manuscrite. Point clos.
     const texte = await verifierExtracteur(await genererPDF(rapport(r18())))
-    expect(texte).toMatch(/provisoire/i)
+    expect(texte).toContain('Charbel ZOHOUN')
+    expect(texte).not.toMatch(/provisoire/i)
   })
 
   it('n’insère aucun benchmark pendant l’amorçage', async () => {
