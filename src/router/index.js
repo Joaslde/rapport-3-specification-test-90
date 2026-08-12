@@ -15,6 +15,17 @@ const router = createRouter({
       component: () => import('@/views/AccueilView.vue'),
     },
     {
+      // Alias de la route ci-dessus. Ce chemin est celui utilisé par le site vitrine
+      // (cabinetlequart.com/faire-le-point/test), via un rewrite Vercel qui délègue
+      // vers ce projet — voir vercel.json et docs/vercel-json-notes.md du site vitrine.
+      // Sans cette route, le fallback /:pathMatch(.*)* ci-dessous réécrivait l'URL du
+      // navigateur en "/" dès l'hydratation, rendant le lien impossible à partager.
+      // Ajouté le 12 août 2026, à la demande explicite du responsable du site vitrine.
+      path: '/faire-le-point/test',
+      name: 'accueil-site-vitrine',
+      component: () => import('@/views/AccueilView.vue'),
+    },
+    {
       path: '/quiz',
       name: 'quiz',
       component: () => import('@/views/QuizView.vue'),
