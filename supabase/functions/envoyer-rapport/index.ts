@@ -91,8 +91,8 @@ function corpsEmail({ prenom, indice90, jours, protocole, lienRapport }) {
 
   return `<!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#faf9f7">
-  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:#faf9f7">
+<body style="margin:0;padding:0;background:#f4f1ea">
+  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:#f4f1ea">
     <tr><td align="center" style="padding:32px 16px">
       <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:560px">
         <tr><td style="padding-bottom:14px;border-bottom:1px solid #ddd9d3">

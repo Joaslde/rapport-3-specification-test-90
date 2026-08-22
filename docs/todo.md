@@ -17,6 +17,8 @@
 | **Dernière mise à jour** | 6 août 2026 |
 | **⚙️ Moteur de calcul** | ✅ **Corrigé selon la note d'audit du 3 août 2026** — 11 défauts traités, 101 valeurs de référence testées (voir § AUDIT ci-dessous) |
 | **✍️ Signature du rapport** | ✅ **B1 définitivement clos** — Charbel ZOHOUN, Directeur, Cabinet Le Quart. Précision du manager le 6 août : « signer » = désigner et authentifier la personne, pas une image manuscrite. Filigrane « document provisoire » retiré. |
+| **🚀 Edge Functions déployées** | ✅ **11 août 2026, 23:35** — `envoyer-rapport` v4 · `generer-rapport` v5 · `calculer-resultat` v5. ⚠️ Elles tournaient encore en version du 4 août jusque-là : toutes les corrections de l'audit ET la signature étaient absentes des rapports réellement envoyés. Voir `docs/lessons.md` L18-L19. |
+| **📧 Envoi email** | ✅ Domaine `cabinetlequart.com` vérifié chez Resend, secrets `RESEND_API_KEY` (clé réelle) et `RESEND_FROM_EMAIL` (`rapport@cabinetlequart.com`) définis sur Supabase le 11 août |
 | **Prochain jalon** | Déploiement Vercel (Phase 10) |
 | **Chaîne complète** | ✅ **Fonctionne de bout en bout** : parcours → score → PDF → email |
 | **Supabase** | ✅ Projet `TEST DES 90 JOURS` — 4 tables, RLS testée, Edge Function déployée |

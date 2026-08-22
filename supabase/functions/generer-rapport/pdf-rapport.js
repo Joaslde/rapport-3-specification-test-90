@@ -24,7 +24,7 @@ import { PDFDocument, StandardFonts, rgb, degrees } from 'https://esm.sh/pdf-lib
 // --- Palette (docs/design-pattern.md §3) ----------------------------
 const ENCRE = rgb(0.106, 0.165, 0.227) // #1B2A3A
 const LAITON = rgb(0.604, 0.482, 0.31) // #9A7B4F
-const PAPIER = rgb(0.98, 0.976, 0.969) // #FAF9F7
+const PAPIER = rgb(0.957, 0.945, 0.918) // #F4F1EA
 const TRAIT = rgb(0.867, 0.851, 0.827) // #DDD9D3
 const GRIS = rgb(0.42, 0.447, 0.502) // #6B7280
 

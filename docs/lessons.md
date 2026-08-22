@@ -438,6 +438,44 @@ fichier CSV testé automatiquement.
 > par le calcul et livrée comme jeu de test exécutable. Règle imposée par le cabinet le
 > 3 août 2026, applicable à tous les documents du projet.
 
+---
+
+### [11 août 2026] — Un rapport reçu par email portait encore le filigrane et la signature vide
+
+**Ce qui a mal tourné :**
+L'utilisateur a passé le Test en conditions réelles. Le PDF reçu affichait toujours le
+filigrane « DOCUMENT PROVISOIRE » et « [Nom du signataire à définir] », alors que ces deux
+points avaient été corrigés dans le code le 6 août, commités, poussés, et marqués `[x]` dans
+`docs/todo.md` avec « preuve » (222 tests au vert, 8 PDF d'exemple régénérés sans filigrane).
+
+**Cause racine :**
+Les Edge Functions Supabase ne se mettent pas à jour depuis Git. `envoyer-rapport` tournait
+encore en v3, déployée le 4 août — deux jours **avant** la correction. Toutes les preuves
+apportées portaient sur le code local (tests Vitest, script de génération de PDF exécuté en
+Node) et **aucune sur ce qui tournait réellement en production**. Le déploiement Vercel du
+front donnait l'illusion que « tout était en ligne », alors que la génération du PDF vit
+côté Supabase, sur un cycle de déploiement entièrement séparé.
+
+Ont donc dormi en production pendant cinq jours, sans que personne le voie : la formule
+corrigée de l'audit, les archétypes 7 et 8, le protocole de détresse élargi, la signature.
+
+**Correction appliquée :**
+`npm run sync:fonctions` puis `supabase functions deploy` sur `envoyer-rapport`,
+`generer-rapport` et `calculer-resultat`. Versions vérifiées après coup : v4, v5, v5.
+
+**Règle pour l'éviter :**
+> **L18 — Une preuve locale n'est pas une preuve de production.** Un test qui passe, un
+> script qui génère le bon fichier, un commit poussé : rien de tout cela ne prouve que le
+> comportement a changé pour l'utilisateur final. Tant qu'un artefact modifié vit dans une
+> Edge Function, la seule preuve recevable est **le numéro de version déployé et son
+> horodatage**, relevés après déploiement.
+
+> **L19 — Ce projet a deux cycles de déploiement indépendants.** Le front part sur Vercel via
+> Git ; les Edge Functions partent sur Supabase via la CLI, et **jamais automatiquement**.
+> Toute modification touchant `supabase/functions/` — y compris `_shared/` — impose
+> `npm run sync:fonctions` **puis** `supabase functions deploy <nom>`. À vérifier
+> systématiquement avant d'annoncer qu'une correction est en ligne.
+
 <!--
 Modèle d'entrée :
 
