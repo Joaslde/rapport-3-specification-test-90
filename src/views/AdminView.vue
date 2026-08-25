@@ -18,6 +18,78 @@ const chargementDetail = ref(false)
 const filtre = ref('')
 const lienCopie = ref(false)
 
+/*
+  ── Onglets (25 août 2026) ──
+  Le back-office couvre désormais trois sources : les tests passés, la liste
+  d'attente VIGIE et les messages de contact. Ces deux dernières viennent du site
+  vitrine (cabinetlequart.com) et écrivent dans le même projet Supabase.
+
+  Chaque onglet charge ses données à sa première ouverture seulement.
+*/
+const onglet = ref('tests')
+const dejaCharges = ref({ vigie: false, messages: false })
+
+async function ouvrirOnglet(nom) {
+  onglet.value = nom
+  if (nom === 'vigie' && !dejaCharges.value.vigie) {
+    await admin.chargerVigie()
+    dejaCharges.value.vigie = true
+  }
+  if (nom === 'messages' && !dejaCharges.value.messages) {
+    await admin.chargerMessages()
+    dejaCharges.value.messages = true
+  }
+}
+
+/*
+  ── Messagerie ──
+  Un message ouvert s'affiche dans un panneau défilant : les messages peuvent être
+  longs, et les tronquer dans une ligne de tableau obligerait à les copier ailleurs
+  pour les lire.
+*/
+const messageOuvert = ref(null)
+
+function ouvrirMessage(message) {
+  messageOuvert.value = message
+  if (!message.lu) admin.marquerLu(message.id)
+}
+
+function fermerMessage() {
+  messageOuvert.value = null
+}
+
+/** Première lettre du prénom et du nom, pour la pastille de chaque ligne. */
+function initiales(message) {
+  const p = (message.prenom || '').trim()[0] ?? ''
+  const n = (message.nom || '').trim()[0] ?? ''
+  return (p + n).toUpperCase() || '—'
+}
+
+/** Aperçu d'une ligne : le message sur une seule ligne, coupé s'il est long. */
+function apercu(texte) {
+  const plat = String(texte ?? '').replace(/\s+/g, ' ').trim()
+  return plat.length > 110 ? plat.slice(0, 110) + '…' : plat
+}
+
+/*
+  Date relative, comme dans une messagerie : « 14:32 » aujourd'hui, « hier »,
+  puis la date courte. Lire « il y a 3 jours » demande moins d'effort qu'une date
+  absolue quand on parcourt une liste.
+*/
+function dateRelative(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const maintenant = new Date()
+  const memeJour = d.toDateString() === maintenant.toDateString()
+  if (memeJour) {
+    return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+  }
+  const hier = new Date(maintenant)
+  hier.setDate(hier.getDate() - 1)
+  if (d.toDateString() === hier.toDateString()) return 'Hier'
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })
+}
+
 const lienRapport = computed(() => {
   if (!detailOuvert.value?.token_rapport) return ''
   return `${window.location.origin}/rapport?t=${detailOuvert.value.token_rapport}`
@@ -120,12 +192,48 @@ const NIVEAUX_LIBELLES = {
             <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
               Back-office
             </p>
-            <h1 class="mt-2 font-titre text-[26px] font-semibold">Résultats du test</h1>
+            <h1 class="mt-2 font-titre text-[26px] font-semibold">
+              {{ onglet === 'tests' ? 'Résultats du test'
+                : onglet === 'vigie' ? 'Liste d’attente VIGIE'
+                : 'Messages reçus' }}
+            </h1>
           </div>
           <button class="text-[13px] text-gristexte hover:text-encre" @click="admin.deconnecter">
             Se déconnecter
           </button>
         </div>
+
+        <!--
+          Onglets. Filet Laiton sous l'onglet actif — le même code que les titres
+          de section du site, pour que le back-office reste dans la charte.
+        -->
+        <nav class="mt-8 flex gap-8 border-b border-trait">
+          <button
+            v-for="t in [
+              { id: 'tests', libelle: 'Tests' },
+              { id: 'vigie', libelle: 'Liste VIGIE' },
+              { id: 'messages', libelle: 'Messages' },
+            ]"
+            :key="t.id"
+            class="relative -mb-px border-b-2 pb-3 text-[13px] tracking-[0.04em] uppercase transition-colors"
+            :class="onglet === t.id
+              ? 'border-laiton font-medium text-encre'
+              : 'border-transparent text-gristexte hover:text-encre'"
+            @click="ouvrirOnglet(t.id)"
+          >
+            {{ t.libelle }}
+            <!-- Pastille de messages non lus : un chiffre, pas une couleur d'alerte. -->
+            <span
+              v-if="t.id === 'messages' && admin.messagesNonLus > 0"
+              class="ml-2 inline-block min-w-[18px] rounded-full bg-encre px-1.5 py-0.5 text-[10px] leading-none text-papier"
+            >
+              {{ admin.messagesNonLus }}
+            </span>
+          </button>
+        </nav>
+
+        <!-- ============ ONGLET : TESTS ============ -->
+        <div v-if="onglet === 'tests'">
 
         <!-- Repères chiffrés -->
         <div class="mt-8 grid grid-cols-4 border-y border-trait text-center">
@@ -217,8 +325,223 @@ const NIVEAUX_LIBELLES = {
             </tbody>
           </table>
         </div>
+        </div>
+        <!-- ============ FIN ONGLET : TESTS ============ -->
+
+        <!-- ============ ONGLET : LISTE VIGIE ============ -->
+        <div v-else-if="onglet === 'vigie'">
+          <div class="mt-8 flex items-baseline justify-between border-b border-trait pb-4">
+            <p class="text-sm text-gristexte">
+              <span class="font-titre text-2xl font-semibold text-encre">
+                {{ admin.inscritsVigie.length }}
+              </span>
+              <span class="ml-2">
+                {{ admin.inscritsVigie.length > 1 ? 'personnes inscrites' : 'personne inscrite' }}
+              </span>
+            </p>
+            <button
+              class="text-[13px] text-gristexte hover:text-encre"
+              :disabled="admin.chargement"
+              @click="admin.chargerVigie"
+            >
+              {{ admin.chargement ? 'Actualisation…' : 'Actualiser' }}
+            </button>
+          </div>
+
+          <p class="mt-4 text-[13px] leading-relaxed text-gristexte">
+            Inscriptions déposées depuis la page VIGIE de cabinetlequart.com. Aucun paiement
+            n’est demandé : ces personnes seront prévenues au lancement, prévu au premier
+            trimestre 2027.
+          </p>
+
+          <div class="mt-6 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-trait text-[11px] tracking-[0.06em] text-gristexte uppercase">
+                  <th class="py-3 pr-4">Date</th>
+                  <th class="py-3 pr-4">Prénom</th>
+                  <th class="py-3 pr-4">Nom</th>
+                  <th class="py-3">Courriel</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="i in admin.inscritsVigie"
+                  :key="i.id"
+                  class="border-b border-trait/60 hover:bg-encre/[0.02]"
+                >
+                  <td class="py-3 pr-4 whitespace-nowrap text-gristexte">
+                    {{ formaterDate(i.cree_le) }}
+                  </td>
+                  <td class="py-3 pr-4">{{ i.prenom }}</td>
+                  <td class="py-3 pr-4">{{ i.nom }}</td>
+                  <td class="py-3">
+                    <a :href="`mailto:${i.courriel}`" class="text-encre underline">{{ i.courriel }}</a>
+                  </td>
+                </tr>
+                <tr v-if="!admin.inscritsVigie.length">
+                  <td colspan="4" class="py-10 text-center text-gristexte">
+                    Personne ne s’est encore inscrit.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ============ ONGLET : MESSAGES ============ -->
+        <!--
+          Vue de type messagerie : une bande par message, cliquable, qui ouvre un
+          panneau défilant. Demandé explicitement — les messages peuvent être longs
+          et ne tiennent pas dans une cellule de tableau.
+        -->
+        <div v-else>
+          <div class="mt-8 flex items-baseline justify-between border-b border-trait pb-4">
+            <p class="text-sm text-gristexte">
+              <span class="font-titre text-2xl font-semibold text-encre">
+                {{ admin.messages.length }}
+              </span>
+              <span class="ml-2">
+                {{ admin.messages.length > 1 ? 'messages' : 'message' }}
+              </span>
+              <span v-if="admin.messagesNonLus > 0" class="ml-2 text-encre">
+                · {{ admin.messagesNonLus }} non {{ admin.messagesNonLus > 1 ? 'lus' : 'lu' }}
+              </span>
+            </p>
+            <button
+              class="text-[13px] text-gristexte hover:text-encre"
+              :disabled="admin.chargement"
+              @click="admin.chargerMessages"
+            >
+              {{ admin.chargement ? 'Actualisation…' : 'Actualiser' }}
+            </button>
+          </div>
+
+          <ul class="mt-6">
+            <li v-for="m in admin.messages" :key="m.id">
+              <button
+                class="flex w-full items-start gap-4 border-b border-trait/60 py-4 text-left transition-colors hover:bg-encre/[0.02]"
+                @click="ouvrirMessage(m)"
+              >
+                <!-- Pastille d'initiales : repère visuel, aucune image à charger. -->
+                <span
+                  class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-medium"
+                  :class="m.lu ? 'bg-trait text-gristexte' : 'bg-encre text-papier'"
+                >
+                  {{ initiales(m) }}
+                </span>
+
+                <span class="min-w-0 flex-1">
+                  <span class="flex items-baseline justify-between gap-4">
+                    <span class="truncate" :class="m.lu ? 'text-encre' : 'font-medium text-encre'">
+                      {{ m.prenom }} {{ m.nom }}
+                    </span>
+                    <span class="shrink-0 text-[12px] whitespace-nowrap text-gristexte">
+                      {{ dateRelative(m.cree_le) }}
+                    </span>
+                  </span>
+
+                  <span class="mt-0.5 block text-[12px] text-gristexte">{{ m.categorie }}</span>
+
+                  <span
+                    class="mt-1 block truncate text-[13px]"
+                    :class="m.lu ? 'text-gristexte' : 'text-encre'"
+                  >
+                    {{ apercu(m.message) }}
+                  </span>
+                </span>
+
+                <!-- Point plein : non lu. Rien : lu. Pas de couleur d'alerte (§19). -->
+                <span
+                  v-if="!m.lu"
+                  class="mt-4 h-2 w-2 shrink-0 rounded-full bg-laiton"
+                  aria-label="Non lu"
+                />
+              </button>
+            </li>
+
+            <li v-if="!admin.messages.length" class="py-10 text-center text-gristexte">
+              Aucun message reçu.
+            </li>
+          </ul>
+        </div>
       </div>
     </main>
+
+    <!-- ============ PANNEAU DE LECTURE D'UN MESSAGE ============ -->
+    <!--
+      Même motif que le panneau de détail : voile sombre, panneau à droite,
+      fermeture au clic à côté ou sur Échap. Le corps du message défile seul,
+      l'en-tête reste visible — un message long ne fait pas perdre l'expéditeur.
+    -->
+    <div
+      v-if="messageOuvert"
+      class="fixed inset-0 z-10 bg-encre/40"
+      @click.self="fermerMessage"
+      @keydown.esc="fermerMessage"
+    >
+      <div class="ml-auto flex h-full w-full max-w-lg flex-col bg-papier shadow-xl">
+        <!-- En-tête fixe -->
+        <div class="shrink-0 border-b border-trait px-8 pt-10 pb-6">
+          <button class="text-[13px] text-gristexte hover:text-encre" @click="fermerMessage">
+            ← Fermer
+          </button>
+
+          <div class="mt-6 flex items-start gap-4">
+            <span
+              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-encre text-[15px] font-medium text-papier"
+            >
+              {{ initiales(messageOuvert) }}
+            </span>
+            <div class="min-w-0">
+              <h2 class="font-titre text-xl font-semibold">
+                {{ messageOuvert.prenom }} {{ messageOuvert.nom }}
+              </h2>
+              <p class="mt-1 text-[13px] break-all text-gristexte">
+                <a :href="`mailto:${messageOuvert.courriel}`" class="underline">
+                  {{ messageOuvert.courriel }}
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <dl class="mt-6 space-y-2 text-[13px]">
+            <div class="flex justify-between gap-4">
+              <dt class="shrink-0 text-gristexte">Vous êtes</dt>
+              <dd class="min-w-0 text-right break-words">{{ messageOuvert.categorie }}</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="shrink-0 text-gristexte">Reçu le</dt>
+              <dd class="min-w-0 text-right">{{ formaterDate(messageOuvert.cree_le) }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Corps du message : la seule zone qui défile -->
+        <div class="min-h-0 flex-1 overflow-y-auto px-8 py-6">
+          <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+            Message
+          </p>
+          <!--
+            `whitespace-pre-wrap` conserve les retours à la ligne saisis par
+            l'expéditeur : un message structuré en paragraphes le reste.
+          -->
+          <p class="mt-4 text-[15px] leading-[1.7] whitespace-pre-wrap">
+            {{ messageOuvert.message }}
+          </p>
+        </div>
+
+        <!-- Pied fixe : répondre par le client de messagerie du poste -->
+        <div class="shrink-0 border-t border-trait px-8 py-5">
+          <a
+            :href="`mailto:${messageOuvert.courriel}?subject=${encodeURIComponent('Votre message au cabinet Le Quart')}`"
+            class="inline-block border border-encre px-5 py-2.5 text-[13px] tracking-[0.04em] text-encre uppercase transition-colors hover:bg-encre hover:text-papier"
+          >
+            Répondre
+          </a>
+        </div>
+      </div>
+    </div>
 
     <!-- ============ PANNEAU DE DÉTAIL ============ -->
     <div

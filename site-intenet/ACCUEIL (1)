@@ -1,0 +1,195 @@
+# CABINETLEQUART.COM — LES ACCOMPAGNEMENTS
+## Version finale de `/accompagnements` et gabarit des pages produit
+
+**Date :** 3 août 2026
+**Longueur de la page :** 447 mots
+**Remplace :** la version du même jour
+**Destinataires :** développeur, designer
+
+---
+
+## RÈGLES APPLICABLES
+
+| # | Règle |
+|---|---|
+| 1 | **Ordre décroissant.** L'accompagnement d'abord, la formation en dernier. |
+| 2 | **Tous les prix affichés**, en francs CFA d'abord, équivalent en euros entre parenthèses. |
+| 3 | **Aucune justification de prix.** La page énonce ce qui est fourni et ce que cela coûte. Elle n'explique jamais pourquoi. |
+| 4 | **Un seul bouton : « Faire le point »**, en clôture. Les renvois vers les pages produit sont des liens texte. |
+| 5 | Aucun encadré « recommandé », aucun compte à rebours, aucune mention de places restantes en temps réel. |
+
+---
+
+# PAGE `/accompagnements`
+
+## OUVERTURE
+
+> # Les accompagnements
+>
+> Quatre offres disponibles, une cinquième en construction. Elles ne se remplacent pas les unes les autres : l'accompagnement de douze mois est le cœur du cabinet, le reste y conduit ou s'y ajoute.
+
+---
+
+## LE TABLEAU
+
+| Offre | Prix | Ce que cela représente | Accès |
+|---|---|---|---|
+| **Accompagnement 12 mois**<br>*Cohorte Fondatrice — 15 places* | **8,5 M FCFA**<br>*(13 000 €)* | **Plus de 150 heures de travail de la cellule**, sur douze mois.<br>Environ 6 h par mois de votre temps, plus deux journées de séminaire. | Sur candidature |
+| **Diagnostic 360** | **1,64 M FCFA**<br>*(2 500 €)* | **Plus de 15 heures de travail de la cellule** : entretiens, analyse de vos états financiers et de votre organisation, réunion de cellule, rédaction du rapport.<br>2 à 3 h d'entretiens de votre côté. | Sur dossier court |
+| **Les Rencontres du Quart** | **350 000 FCFA**<br>*(530 €)*<br>750 € — diaspora | Deux journées animées par la cellule, sur des cas réels apportés par les participants. | Deux fois par an, sur inscription |
+| **Formation à la méthode** | **392 000 FCFA**<br>*(597 €)*<br>997 € — diaspora | L'ensemble du Protocole SOCLE, en accès immédiat. Sans accompagnement. | Accès immédiat |
+
+> *Ces heures sont celles de la cellule. Elles n'incluent ni les séminaires, ni le temps que vous consacrerez vous-même à ce que vous aurez décidé entre les séances.*
+>
+> *Le tarif de la cohorte suivante, à partir d'avril 2027, sera de 13,1 M FCFA (20 000 €). Les montants sont indiqués en francs CFA et en euros ; l'équivalent en dirhams et les modalités de règlement, échelonnement compris, figurent sur chaque page d'offre.*
+
+---
+
+## LES QUATRE OFFRES
+
+> ### L'accompagnement de douze mois
+>
+> Le Protocole SOCLE appliqué à votre entreprise par la cellule complète : un diagnostic d'entrée, une feuille de route contractuelle, deux séances par mois avec votre référent, une réunion de cellule mensuelle consacrée à votre dossier, et un rapport de fin de cycle.
+>
+> Quinze places. Le tarif de cette première cohorte ne sera pas reconduit.
+>
+> → *Voir le programme et les critères d'admission*
+>
+> ### Le Diagnostic 360
+>
+> Trois semaines. Vous, votre entourage, votre entreprise. Entretiens avec la psychologue clinicienne, le pôle comptable et le fondateur, examen de vos états financiers et de votre organisation, puis une réunion de cellule consacrée à votre situation.
+>
+> Vous en repartez avec un rapport écrit et votre feuille de route — que vous poursuiviez avec nous ou non.
+>
+> → *Voir le déroulé du diagnostic*
+>
+> ### Les Rencontres du Quart
+>
+> Deux journées, deux fois par an. Les dirigeants de la cohorte en cours, et un nombre limité de places ouvertes. On y travaille sur des cas réels, apportés par les participants.
+>
+> → *Voir les prochaines dates*
+>
+> ### La formation à la méthode
+>
+> L'ensemble du Protocole SOCLE, en accès immédiat, sans accompagnement. Ce que nous faisons, dans quel ordre, avec quels outils. À appliquer seul.
+>
+> → *Voir le contenu de la formation*
+
+---
+
+## VIGIE — À VENIR
+
+*Bloc distinct, hors tableau. Fond Brume.*
+
+> **VIGIE** sera notre conseiller de premier recours : un interlocuteur disponible à toute heure, qui ne valide jamais une intention sans l'avoir éprouvée.
+>
+> Il ne remplacera pas un accompagnement, et il ne sera ni thérapeute, ni avocat, ni comptable.
+>
+> **Disponibilité : premier trimestre 2027.** Trois formules, à partir de 15 000 FCFA par mois selon le niveau d'usage et le pays.
+>
+> Il n'y a rien à payer aujourd'hui. Vous pouvez demander à être prévenu du lancement.
+>
+> → *Rejoindre la liste d'attente*
+
+---
+
+## CLÔTURE
+
+> Aucune de ces offres ne se choisit à l'aveugle. Commencez par mesurer où vous en êtes.
+>
+> **[ Faire le point — 18 questions, 7 minutes ]**
+
+---
+---
+
+# GABARIT DES PAGES PRODUIT
+
+Les quatre pages produit suivent la même structure, dans cet ordre, sans exception.
+
+| # | Section | Contenu |
+|---|---|---|
+| 1 | **Pour qui** | Le profil précis. Sur l'accompagnement et le diagnostic : les critères d'admission chiffrés, repris de la page Admission. |
+| 2 | **Ce que vous obtenez** | Les livrables, nommés. Pas les bénéfices — les objets. |
+| 3 | **Le travail que cela représente** | **Bloc obligatoire.** Le détail des heures de la cellule : qui intervient, sur quoi, combien de temps. C'est ce qui rend le prix lisible. |
+| 4 | **Ce que cela n'inclut pas** | **Bloc obligatoire.** Le plus lu et le plus rare. |
+| 5 | **Comment cela se déroule** | Le calendrier, les intervenants, le rythme réel |
+| 6 | **Le temps demandé au dirigeant** | **Bloc obligatoire.** En heures par mois et en journées. Filtre autant que le prix. |
+| 7 | **Le prix** | Affiché, en FCFA, en euros et en dirhams. Ce qui est inclus, ce qui ne l'est pas, les modalités de règlement et d'échelonnement. |
+| 8 | **Comment candidater** | Une seule action. Aucun choix concurrent. |
+
+### Contenu du bloc 4, par offre
+
+| Offre | Ce que cela n'inclut pas |
+|---|---|
+| **Accompagnement** | Aucune prestation d'exécution : nous ne tenons pas votre comptabilité, ne rédigeons pas vos actes, ne recrutons pas à votre place. Aucun suivi thérapeutique. Aucun financement ni apport en capital. Les honoraires des professionnels vers lesquels nous vous orientons. |
+| **Diagnostic** | Aucun accompagnement après la remise du rapport. Aucun audit comptable ni certification. Aucune garantie d'admission à la cohorte. |
+| **Rencontres** | Le transport et l'hébergement. Aucun suivi individuel entre deux Rencontres. |
+| **Formation** | Aucun accompagnement, aucune séance, aucune réponse individuelle. Aucun accès à la cellule. |
+
+---
+---
+
+# NOTES D'INTÉGRATION
+
+## Les deux corrections de cette version
+
+### 1. La contrepartie du tarif fondateur est supprimée
+
+Le passage annonçant l'absence de résultats et l'échange contre un témoignage disparaît intégralement.
+
+**Trois motifs, dans l'ordre de gravité :**
+
+- Il place le client en position de sujet d'essai et présente le prix comme la compensation d'un risque qu'il prendrait.
+- **Un témoignage négocié avant le travail est un témoignage que personne ne croit.** On le demande à la fin, si le résultat le justifie, et le client reste libre de refuser.
+- L'échange n'avait aucun objet : **la mesure de l'Indice 90 à l'entrée et à la sortie fait déjà partie de la méthode**, et la page `/methode` l'annonce. Il n'y avait aucune monnaie à créer.
+
+Le remplacement — *« Quinze places. Le tarif de cette première cohorte ne sera pas reconduit »* — énonce une rareté factuelle et s'arrête là. **Une maison sérieuse ne justifie pas ses prix.** Toute phrase ajoutée à cet endroit l'affaiblirait.
+
+**Conséquence sur le contrat :** la clause de publication change de nature. Elle ne s'échange plus contre un prix, elle relève de la méthode. Formulation à retenir : *le client accepte que son Indice 90 d'entrée et de sortie soit intégré aux résultats agrégés de sa cohorte, publiés sans mention nominative.* Le témoignage individuel n'est pas prévu au contrat.
+
+### 2. La colonne du tableau est renommée et retournée
+
+Elle s'appelait « Temps demandé » et n'affichait que l'engagement du client. Elle laissait donc croire que **8,5 millions de FCFA achètent six heures par mois**, et le déséquilibre était pire encore sur le diagnostic — deux à trois heures d'entretiens pour 1,64 million.
+
+La colonne devient « Ce que cela représente », et le travail de la cellule y figure en premier.
+
+**Les volumes annoncés sont vérifiables.** Pour l'accompagnement : vingt-quatre séances avec le référent et leur préparation, douze séances avec le pôle comptable, quatre avec la psychologue, l'expertise juridique aux moments clés, douze réunions de cellule à quatre personnes, le diagnostic d'entrée et le rapport de fin de cycle. Le total dépasse cent soixante heures ; la page en annonce cent cinquante, ce qui laisse une marge.
+
+Pour le diagnostic : trois entretiens, l'analyse des états financiers et de l'organisation, une réunion de cellule et la rédaction du rapport. Le total approche dix-huit heures ; la page en annonce quinze.
+
+## Trois vérifications complémentaires
+
+| Point | Statut |
+|---|---|
+| **Aucune expérience revendiquée** | Les descriptions portent sur le format des offres, jamais sur des sessions passées ou des clients accompagnés. Conforme. |
+| **Aucune promesse de résultat** | Le diagnostic promet un rapport et une feuille de route, pas un effet. L'accompagnement promet un protocole et des livrables. Conforme. |
+| **Modalités de règlement** | Renvoyées aux pages produit, avec mention explicite de l'échelonnement. Nécessaire : à 8,5 M FCFA, l'absence totale de mention aurait été remarquée. |
+
+## Le point qui reste à trancher
+
+**Le diagnostic : « sur dossier court » ou candidature complète ?**
+
+J'ai retenu le dossier court — cinq à sept questions vérifiant les critères durs, puis paiement en ligne, sans entretien préalable. Sur un produit de conversion, une candidature de douze minutes ajoute une friction là où elle ne protège rien : vous ne risquez pas d'accepter le mauvais client, vous risquez de perdre le bon.
+
+L'argument contraire tient : un diagnostic vendu sans filtre à un dirigeant hors critères produit un rapport qui ne mène nulle part. Si vous préférez la candidature complète, seule la mention du tableau change.
+
+## Liens de la page
+
+| Emplacement | Cible |
+|---|---|
+| Accompagnement | `/accompagnements/cohorte` |
+| Diagnostic | `/accompagnements/diagnostic` |
+| Rencontres | `/accompagnements/seminaires` |
+| Formation | `/accompagnements/formation` |
+| VIGIE | `/vigie` |
+| Clôture, bouton | `/faire-le-point` |
+
+## Dépendances à lever avant mise en ligne
+
+- **L'encaissement des gros montants n'est pas résolu.** Le mobile money ne traite pas 8,5 M FCFA. Sans solution bancaire ni échéancier opérationnel, la page affiche un prix qu'aucun visiteur ne peut régler — et elle renvoie désormais explicitement à des modalités d'échelonnement qui doivent exister.
+- **Les dates des Rencontres du Quart** doivent être fixées avant d'écrire « voir les prochaines dates ».
+- **La clause de publication agrégée** doit figurer au contrat d'accompagnement, dans sa formulation corrigée.
+
+---
+
+*Copie établie le 3 août 2026. Les conversions sont calculées à la parité fixe de 655,957 FCFA pour un euro.*

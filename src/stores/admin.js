@@ -18,6 +18,16 @@ export const useAdmin = defineStore('admin', () => {
   const chargement = ref(false)
   const erreur = ref('')
 
+  /*
+    Formulaires du site vitrine (cabinetlequart.com), ajoutés le 25 août 2026.
+    Chargés à la demande, quand on ouvre l'onglet correspondant : le back-office
+    s'ouvre toujours sur les résultats du Test, inutile d'aller chercher le reste
+    tant que personne ne le regarde.
+  */
+  const inscritsVigie = ref([])
+  const messages = ref([])
+  const messagesNonLus = ref(0)
+
   async function appeler(action, params = {}) {
     const { data, error } = await supabase.functions.invoke('admin-resultats', {
       body: { mot_de_passe: motDePasse.value, action, ...params },
@@ -61,10 +71,56 @@ export const useAdmin = defineStore('admin', () => {
     return data.resultat
   }
 
+  async function chargerVigie() {
+    chargement.value = true
+    try {
+      const data = await appeler('vigie')
+      inscritsVigie.value = data.inscrits
+    } catch {
+      erreur.value = 'Impossible de charger la liste d’attente.'
+    } finally {
+      chargement.value = false
+    }
+  }
+
+  async function chargerMessages() {
+    chargement.value = true
+    try {
+      const data = await appeler('contacts')
+      messages.value = data.messages
+      messagesNonLus.value = data.nonLus
+    } catch {
+      erreur.value = 'Impossible de charger les messages.'
+    } finally {
+      chargement.value = false
+    }
+  }
+
+  /*
+    Marque un message comme lu. L'affichage est mis à jour immédiatement, sans
+    attendre le serveur : l'opération ne peut pas échouer de façon significative
+    et un décompte qui met une seconde à bouger donne l'impression d'un bug.
+  */
+  async function marquerLu(id) {
+    const message = messages.value.find((m) => m.id === id)
+    if (!message || message.lu) return
+    message.lu = true
+    messagesNonLus.value = Math.max(0, messagesNonLus.value - 1)
+    try {
+      await appeler('contact-lu', { id })
+    } catch {
+      // Sans conséquence : le message reste visible, il sera remarqué au prochain
+      // chargement s'il n'a pas été enregistré.
+    }
+  }
+
   function deconnecter() {
     motDePasse.value = ''
     authentifie.value = false
     resultats.value = []
+    inscritsVigie.value = []
+    messages.value = []
+    messagesNonLus.value = 0
     sessionStorage.removeItem(CLE_SESSION)
   }
 
@@ -78,11 +134,17 @@ export const useAdmin = defineStore('admin', () => {
     motDePasse,
     authentifie,
     resultats,
+    inscritsVigie,
+    messages,
+    messagesNonLus,
     chargement,
     erreur,
     connecter,
     rafraichir,
     chargerDetail,
+    chargerVigie,
+    chargerMessages,
+    marquerLu,
     deconnecter,
     tenterReprise,
   }

@@ -1,0 +1,184 @@
+# CABINETLEQUART.COM — ADMISSION
+## Versions finales de `/admission` et `/admission/candidature`
+
+**Date :** 3 août 2026
+**Longueur de la page :** 498 mots
+**Destinataires :** développeur, designer
+
+---
+
+## RÈGLES APPLICABLES
+
+| # | Règle |
+|---|---|
+| 1 | **Aucune justification de la sélectivité.** La page publie ses critères et s'arrête. Elle n'explique jamais pourquoi elle refuse. |
+| 2 | **Un seul bouton : « Déposer une candidature »**, en clôture. Le renvoi vers le Test est un lien texte, à l'étape 1 du parcours. |
+| 3 | Trois monnaies sur les critères chiffrés : FCFA, euro, dirham. |
+| 4 | Aucune mention de places restantes, aucun compte à rebours. |
+| 5 | **Aucun taux de refus affiché avant mars 2027.** Voir les notes. |
+
+---
+
+# PAGE `/admission`
+
+## OUVERTURE
+
+> # Admission
+>
+> Nous publions nos critères. La plupart des entreprises n'y répondent pas.
+
+---
+
+## BLOC 1 — LES CRITÈRES
+
+> Cinq conditions. Les cinq doivent être remplies.
+
+| | Critère |
+|---|---|
+| **1** | **Trois ans d'existence** au minimum |
+| **2** | **Six collaborateurs** au minimum |
+| **3** | **Un chiffre d'affaires d'au moins 180 millions de FCFA**<br>*275 000 € · environ 3 millions de dirhams* |
+| **4** | **Un résultat net positif d'au moins 34 millions de FCFA** au dernier exercice<br>*52 000 € · environ 560 000 dirhams* |
+| **5** | **Une entreprise qui ne survivrait pas quatre-vingt-dix jours à votre absence** |
+
+> Le cinquième critère est celui qui définit notre métier. Une entreprise qui remplit les quatre premiers et fonctionne déjà sans son dirigeant n'a rien à faire ici.
+>
+> Il se mesure en sept minutes. → *Faire le point*
+>
+> *Les seuils 3 et 4 correspondent au tarif de la Cohorte Fondatrice. Ils seront relevés pour la cohorte d'avril 2027, dont le tarif sera supérieur. La parité franc CFA / euro est fixe ; les équivalents en dirhams sont indicatifs.*
+
+---
+
+## BLOC 2 — QUI NOUS REFUSONS
+
+> **Une entreprise qui n'est pas rentable.** Nous ne sommes pas un plan de sauvetage. Un accompagnement de douze mois ne redresse pas une exploitation qui perd de l'argent.
+>
+> **Un dirigeant qui traverse une difficulté personnelle demandant une prise en charge.** Nous l'orientons vers un professionnel de santé. La question se reposera plus tard, et elle se reposera avec nous si vous le souhaitez.
+>
+> **Un financement qui mettrait votre trésorerie en tension.** Voir la règle ci-dessous.
+>
+> **Une recherche de prestataire d'exécution.** Nous ne tenons pas votre comptabilité, ne rédigeons pas vos actes et ne recrutons pas à votre place.
+
+---
+
+## BLOC 3 — LES CRITÈRES DE PERTINENCE
+
+> Trois sur cinq au minimum.
+>
+> — Vous n'avez ni conseil, ni comité de direction réel.
+> — Vous n'avez ni associé de confiance, ni mentor, ni pair à qui parler sans conséquence.
+> — Vous prenez seul l'essentiel des décisions structurantes.
+> — Vos relations clients ou bancaires majeures passent par vous personnellement.
+> — Vous avez traversé une rupture au cours des deux dernières années : départ d'un associé, perte d'un client majeur, conflit familial lié à l'entreprise.
+
+---
+
+## BLOC 4 — LA RÈGLE DES 25 %
+
+> **L'accompagnement ne doit jamais représenter plus du quart de votre résultat net du dernier exercice.**
+>
+> C'est la raison du quatrième critère : le seuil de 34 millions de FCFA correspond exactement au tarif de la Cohorte Fondatrice.
+>
+> Si votre résultat net ne le permet pas, nous refuserons votre candidature — y compris si vous insistez, y compris si vous avez les fonds par ailleurs. Une entreprise qui finance son accompagnement en tendant sa trésorerie commence par le mauvais bout.
+
+---
+
+## BLOC 5 — CE QUI SE PASSE ENSUITE
+
+> **1. Vous faites le point.** Sept minutes, gratuit. Vous obtenez votre Indice 90, qui répond au cinquième critère. → *Faire le point*
+>
+> **2. Vous déposez une candidature.** Quinze à vingt questions, environ douze minutes. Vous pouvez l'interrompre et la reprendre.
+>
+> **3. Nous répondons sous cinq jours ouvrés**, y compris pour dire non, et toujours par écrit.
+>
+> **4. Si votre dossier est retenu, nous nous parlons** quarante-cinq minutes.
+>
+> **5. Le Diagnostic 360 constitue la première phase de l'accompagnement.** Si vous l'avez déjà réalisé, son montant est déduit.
+
+---
+
+## CLÔTURE
+
+> **[ Déposer une candidature ]**
+
+---
+---
+
+# PAGE `/admission/candidature`
+
+## PRINCIPE
+
+Formulaire long, délibérément exigeant. **L'effort de remplissage est lui-même un filtre.**
+
+| Paramètre | Spécification |
+|---|---|
+| Longueur | 15 à 20 questions, environ 12 minutes |
+| Progression | Sauvegarde automatique, reprise par lien |
+| Scoring | Automatique sur les cinq critères durs |
+| Réponse | **Sous cinq jours ouvrés, sans exception** |
+| Profils non éligibles | Message écrit, orientant vers la formation ou les Rencontres. **Jamais de silence.** |
+
+## LES DEUX MENTIONS OBLIGATOIRES
+
+> **Ce que deviennent vos réponses**
+>
+> Vos réponses sont conservées dans un dossier à votre nom. Elles ne sont transmises à aucun tiers sans votre accord explicite — ni à vos collaborateurs, ni à vos associés, ni à aucun partenaire. Vous pouvez en demander l'effacement à tout moment.
+
+> **Notre délai**
+>
+> Nous répondons sous cinq jours ouvrés, y compris pour dire non.
+
+## BLOCS DU FORMULAIRE
+
+| # | Bloc | Contenu |
+|---|---|---|
+| 1 | Identité | Prénom, nom, fonction, entreprise, pays, courriel, téléphone |
+| 2 | L'entreprise | Secteur, année de création, effectif, chiffre d'affaires, résultat net du dernier exercice |
+| 3 | Votre situation | Les cinq critères de pertinence, en questions fermées |
+| 4 | Votre Indice 90 | Déjà passé le Test ? Si oui, rattachement automatique au dossier. Si non, invitation à le passer avant l'entretien. |
+| 5 | Trois questions ouvertes | Ce qui vous amène · ce que vous avez déjà tenté · ce qui se passerait si rien ne changeait dans dix-huit mois |
+| 6 | Consentement | Mention de confidentialité, acceptation |
+
+**Le bloc 5 est celui qui décide.** Les cinq critères se vérifient par un algorithme ; ces trois questions se lisent. C'est là que se juge si un dirigeant est accompagnable.
+
+---
+---
+
+# NOTES D'INTÉGRATION
+
+## Les corrections apportées à l'ossature
+
+| # | Correction | Motif |
+|---|---|---|
+| 1 | **Le bloc « pourquoi nous publions nos critères » est supprimé.** Remplacé par deux phrases. | *« Une conversation qui n'aboutit pas coûte du temps aux deux parties »* justifiait la sélectivité par votre économie de temps commercial. Sur la page qui doit démontrer l'exigence, cela dit l'inverse. Une maison n'explique pas pourquoi elle est sélective. |
+| 2 | **Un cinquième critère dur est ajouté** : l'entreprise ne survivrait pas 90 jours à l'absence du dirigeant. | Sans lui, la page décrit un seuil de taille et de rentabilité — un cabinet qui sélectionne sur la solvabilité. C'est le critère qui définit le métier. |
+| 3 | **Les motifs de refus remontent avant les critères de pertinence.** | Un candidat non éligible trouve la sortie plus vite, un candidat éligible s'engage plus loin. |
+| 4 | **Le critère de détresse psychique est reformulé en séquence, non en exclusion.** | Écrire qu'on refuse « un dirigeant en détresse psychique aiguë » **apprend à celui qui l'est qu'il doit le cacher**. Il minorera ses réponses au Test et à la candidature, et le protocole de détection ne le verra plus. C'est le seul dispositif du site qui protège une personne. |
+| 5 | **Le tarif de référence est nommé** dans le bloc des critères et dans la règle des 25 %. | Le seuil de 34 M FCFA correspond au tarif fondateur. Sans cette mention, la page devient fausse en avril 2027 sans que personne ne s'en aperçoive. |
+| 6 | **Le Test devient l'étape 1 du parcours**, avec un lien texte. | Le parcours réel commence par sept minutes gratuites, pas par un formulaire de douze minutes. Et le Test produit le chiffre du cinquième critère. |
+| 7 | **Les dirhams sont ajoutés**, avec la mention que la parité FCFA/euro est fixe et que le dirham est indicatif. | Le Maroc est un marché de premier rang. Une conversion flottante présentée comme exacte deviendrait fausse. |
+| 8 | **Le formulaire porte la mention de confidentialité et le délai chiffré.** | Le formulaire demande des états financiers et des informations sur l'entourage. Il doit porter le même engagement que la page Faire le point. |
+| 9 | **Le Diagnostic 360 est présenté comme première phase de l'accompagnement, déductible.** | Lève une ambiguïté du catalogue : le diagnostic n'est pas un doublon de la phase Scanner, c'en est la forme achetable séparément. |
+
+## Deux points à confirmer
+
+**L'effectif minimum en diaspora.** La spécification prévoyait cinq collaborateurs pour l'anneau diaspora et six pour la zone FCFA. J'ai retenu six pour tous : une exception d'un poste complique la page sans rien filtrer de plus. À confirmer.
+
+**Le taux de refus.** Il ne peut pas être publié avant mars 2027 — vous n'avez refusé personne. Le bloc « qui nous refusons » fait le même travail sans chiffre. À ajouter une fois la Cohorte Fondatrice constituée, sous la forme factuelle : *« Sur les [N] candidatures reçues pour la Cohorte Fondatrice, 15 ont été retenues. »*
+
+## Liens des deux pages
+
+| Emplacement | Cible |
+|---|---|
+| `/admission` — bloc 1, critère 5 | `/faire-le-point` |
+| `/admission` — bloc 5, étape 1 | `/faire-le-point` |
+| `/admission` — clôture, bouton | `/admission/candidature` |
+| `/admission/candidature` — mention | `/confidentialite` |
+
+## Dépendance
+
+Le message adressé aux profils non éligibles doit être rédigé avant la mise en ligne. **Il sera lu par la majorité des candidats.** Un refus qui oriente vaut mieux qu'un refus qui congédie, et c'est le seul contact que la plupart auront avec le cabinet.
+
+---
+
+*Copie établie le 3 août 2026. Les conversions en francs CFA sont calculées à la parité fixe de 655,957 pour un euro ; les équivalents en dirhams sont arrondis et doivent être revus annuellement.*

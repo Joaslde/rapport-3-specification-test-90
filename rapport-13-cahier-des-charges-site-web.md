@@ -1,0 +1,825 @@
+# CABINETLEQUART.COM
+
+## Cahier des charges complet — architecture, contenu, design, technique
+
+**Date :** 3 août 2026 **Objet :** Spécification intégrale du site du cabinet Le Quart **Destinataires :** développeur, designer, rédacteur, photographe **Mise en ligne visée :** fin septembre 2026
+
+---
+
+## SOMMAIRE
+
+**PARTIE I — CADRAGE**
+
+1. Benchmark : deux modèles opposés, et ce qu'il faut prendre à chacun  
+2. Les trois contraintes réelles, et comment on les retourne  
+3. Les huit principes directeurs
+
+**PARTIE II — ARCHITECTURE** 4\. Plan du site 5\. Les pages qu'on ne fait pas, et pourquoi 6\. Navigation et parcours
+
+**PARTIE III — LES PAGES** 7\. Accueil 8\. Faire le point *(Test des 90 Jours)* 9\. La méthode 10\. Les accompagnements 11\. Admission 12\. Le cabinet 13\. L'équipe 14\. Déontologie 15\. Le journal de bord 16\. VIGIE 17\. Contact 18\. Pages légales
+
+**PARTIE IV — SYSTÈME** 19\. Design system appliqué au web 20\. Bibliothèque de composants 21\. Conversion et mesure 22\. SEO et AEO 23\. Technique 24\. Contenu à produire 25\. Recette, planning, budget
+
+---
+
+# PARTIE I — CADRAGE
+
+## 1\. BENCHMARK : DEUX MODÈLES OPPOSÉS
+
+### 1.1 Le modèle Hakluyt — l'autorité par le retrait
+
+Hakluyt est un cabinet de conseil stratégique britannique fondé en 1995, qui évite la publicité et jouit d'une réputation de discrétion et d'efficacité auprès de sa clientèle. Son site est l'un des plus dépouillés du secteur, et sa structure est instructive :
+
+| Observation | Enseignement |
+| :---- | :---- |
+| **Aucune page « Services ».** Les domaines d'expertise sont une simple liste en bas de la page « À propos » | Une maison n'a pas de catalogue. Elle a un domaine de compétence. |
+| **Quatre sous-pages consacrées aux personnes** — Leadership, Team, Directors, International Advisory Board | **La section « qui nous sommes » est plus grosse que la section « ce que nous faisons »** |
+| Aucun prix, aucun formulaire, aucun appel à l'action | La rareté se signale par l'absence de sollicitation |
+| « Nous ne prenons un mandat qu'une fois certains de pouvoir apporter de la valeur. En tant que propriétaires de notre cabinet, nous sommes sélectifs sur ceux pour qui et avec qui nous travaillons. » | **La sélectivité est le principal argument, et elle est énoncée en une phrase** |
+| Une section « Nos valeurs », un rapport annuel public, une déclaration éthique | La transparence institutionnelle vaut preuve |
+
+### 1.2 Le modèle Vistage — la conversion par la qualification
+
+Vistage vend à des dirigeants individuels, comme vous. Sa mécanique est l'inverse :
+
+| Observation | Enseignement |
+| :---- | :---- |
+| L'appel à l'action n'est pas « contactez-nous » mais « remplissez le formulaire pour savoir si vous êtes éligible » | **On ne demande pas au prospect de vouloir. On lui demande de se qualifier.** |
+| Les critères d'admission sont publiés : dirigeant décisionnaire, taille d'entreprise, capacité à contribuer | Publier les critères fait le tri sans conversation |
+| Une seule preuve, répétée partout : une étude Dun & Bradstreet montrant \+4,6 % de croissance annuelle pour les membres contre −4,7 % pour des entreprises comparables | **Un chiffre unique, vérifiable, vaut mieux que dix témoignages** |
+| « Ce n'est pas un groupe de réseautage. Ce n'est pas un mastermind. Ce n'est pas un programme de formation. » | **La démarcation frontale est plus efficace que l'auto-description** |
+| « C'est la pièce où les décisions qui façonnent votre entreprise reçoivent une attention sérieuse, expérimentée et sans conflit d'intérêt. » | Une seule phrase qui dit ce que c'est, après avoir dit ce que ce n'est pas |
+
+### 1.3 La synthèse retenue
+
+> **La sobriété visuelle et le poids donné aux personnes chez Hakluyt. Le mécanisme de qualification et la démarcation frontale chez Vistage.**
+
+Personne n'occupe cette combinaison en francophonie. Les cabinets africains sont soit institutionnels et muets, soit commerciaux et bruyants. **Un site sobre qui demande explicitement au visiteur s'il est éligible est, en soi, un positionnement.**
+
+---
+
+## 2\. LES TROIS CONTRAINTES RÉELLES, ET COMMENT ON LES RETOURNE
+
+Vos réponses font apparaître trois contraintes. Aucune n'est un obstacle si elle est traitée de front. Toutes deviennent des défauts visibles si on cherche à les masquer.
+
+### 2.1 Contrainte A — L'équipe compte trois personnes nommées, pas quatre spécialistes
+
+**L'état réel :**
+
+| Personne | Rôle | Face au client ? |
+| :---- | :---- | :---- |
+| Vous | Direction, regard transversal | Oui |
+| **Charbel Zohoun** | Business developer | Oui |
+| **Françoise Munoz** | Psychologue clinicienne | Oui |
+| **Ange Desiree NIOULE** | Conseiller juridique | **Oui** |
+| **Josias Marcam** | Agence marketing, vente, intégration IA | **Non** |
+| Consultants — structuration, expertise comptable, expertise juridique | Vivier non nominatif | Oui, mais anonymes |
+
+**Deux problèmes, deux corrections.**
+
+**Problème 1 — ….. n'a pas sa place sur la page équipe.** C'est un prestataire du cabinet, pas un intervenant auprès des clients. Faire figurer une agence de marketing et de vente sur la page « qui vous accompagne » d'un cabinet de conseil aux dirigeants envoie exactement le mauvais signal : elle dit que vous vendez, là où toute la page doit dire que vous conseillez. Un dirigeant attentif le remarquera.
+
+> **Correction : ….. figure dans une section « Partenaires » distincte, ou nulle part.** Il apparaîtra naturellement sur la page VIGIE quand celle-ci existera, en tant que responsable de la construction du produit.
+
+**Problème 2 — Le volet organisation et comptabilité n'a pas de visage.** Or c'est l'un des trois cercles de votre méthode, et l'un des plus déterminants dans le tissu PME de la zone. Une page équipe qui présente un business developer et une psychologue, et qui renvoie le volet entreprise à « un réseau de consultants », affaiblit précisément la promesse de cellule pluridisciplinaire.
+
+> **Correction : nommer au moins un expert-comptable ou un spécialiste de la structuration avant la mise en ligne.** Un accord de principe et une photographie suffisent — il n'a pas besoin d'être salarié. C'est la seule action qui ne peut pas être compensée par la rédaction.
+
+**Ce qui se retourne en force :** trois ou quatre visages nommés, photographiés, avec un parcours vérifiable, valent bien mieux que douze noms sur une page de cabinet anonyme. Hakluyt affiche des équipes entières ; vous affichez une cellule. **Une cellule restreinte est cohérente avec un accompagnement à 30 clients par an.** C'est même exactement ce qu'il faut dire.
+
+**Un point de vigilance sur la psychologue.** La présence de Françoise Munoz est un atout de crédibilité considérable et un risque si elle est mal cadrée. Sa fonction doit être décrite avec précision : elle intervient dans le diagnostic et dans le protocole d'orientation, **elle ne fait pas de thérapie avec vos clients**. Cette précision figure sur sa fiche et sur la page Déontologie. Sans elle, le cabinet glisse vers un registre qui l'expose.
+
+### 2.2 Contrainte B — Aucune preuve spécifique au cabinet
+
+C'est la contrainte la plus lourde, et c'est celle qui offre le meilleur retournement.
+
+**Ce qu'il ne faut surtout pas faire :** inventer des chiffres, emprunter des témoignages, écrire « plus de 300 dirigeants accompagnés », afficher des logos d'entreprises croisées en dix ans d'agence, ou reprendre des statistiques générales en laissant croire qu'elles vous concernent. Sur un marché saturé de preuves fabriquées, une preuve fabriquée découverte est une condamnation.
+
+**Ce qu'il faut faire : déplacer la preuve de l'aval vers l'amont.**
+
+| Preuve classique *(indisponible)* | Preuve de substitution *(disponible immédiatement)* |
+| :---- | :---- |
+| Résultats clients | **La rigueur de l'instrument.** Le Test des 90 Jours est gratuit, sa formule est publiée, ses critères sont publics. Un dirigeant qui le passe constate la qualité du travail avant toute promesse. |
+| Témoignages | **Le parcours du fondateur, raconté par ses erreurs.** Dix ans à la tête d'une agence, plusieurs années en entreprise dont une multinationale. |
+| Nombre de clients | **Les critères d'admission publiés**, qui montrent qui vous refusez |
+| Logos | **La page Déontologie**, qui énonce ce que le cabinet ne fait pas |
+| Chiffres de croissance | **La méthode publiée en détail** — les cinq phases, ce qui est mesuré, ce qui est livré |
+
+**Le retournement décisif : la Cohorte Fondatrice.**
+
+L'absence de résultats n'est pas cachée. Elle est le motif de l'offre.
+
+> *« Nous n'avons pas encore de résultats à montrer. C'est pourquoi les quinze premières places sont à un tarif qui ne reviendra jamais — et pourquoi nous demandons, en échange, l'autorisation de publier les vôtres. »*
+
+Cette phrase fait quatre choses : elle est vraie, elle justifie la remise sans la brader, elle crée une rareté réelle, et elle démontre le rapport à l'honnêteté que le cabinet revendique. **Sur un marché où tout le monde ment sur ses résultats, dire qu'on n'en a pas encore est le signal le plus fort disponible.**
+
+**Sur le parcours du fondateur, une recommandation précise.** La version convenue — « dix ans d'expérience à la tête d'une agence » — ne convainc personne, parce que tout le monde l'écrit. La version qui convainc est celle des erreurs :
+
+> *« J'ai dirigé une agence pendant dix ans. Pendant huit de ces dix années, l'entreprise n'aurait pas survécu trois semaines sans moi. Je ne l'ai pas vu venir, et personne autour de moi n'était en position de me le dire. C'est de là que vient ce cabinet. »*
+
+Ce paragraphe vaut plus que n'importe quelle liste de compétences. Il est vérifiable, il est rare, et il dit à votre client que vous avez vécu son problème plutôt que de l'avoir étudié.
+
+### 2.3 Contrainte C — VIGIE n'existera pas au lancement
+
+Vous avez choisi d'afficher toute la pyramide, VIGIE annoncé comme à venir. **C'est le bon choix, à trois conditions.**
+
+| Condition | Détail |
+| :---- | :---- |
+| **Date annoncée, ou aucune date** | Une date qui glisse abîme la confiance davantage que l'absence de date. Recommandation : « Premier trimestre 2027 ». |
+| **Aucun paiement** | Ne jamais encaisser pour un produit non livré. C'est exactement le comportement des vendeurs de formation dont vous vous démarquez. **Liste d'attente gratuite uniquement.** |
+| **Décrit, pas vanté** | La page dit ce que VIGIE fera et surtout ce qu'il ne fera pas. Le refus de promettre est le meilleur argument. |
+
+**Conséquence financière à intégrer au plan.** Le plan de lancement du rapport n°2 prévoyait 120 abonnés fin octobre et 45 000 € d'abonnements encaissés sur la période août-mars. **Cette ligne disparaît.** Le besoin de trésorerie de démarrage passe mécaniquement de 90–120 k€ à environ 130–165 k€. Ce n'est pas un problème, mais il doit être su maintenant plutôt qu'en décembre.
+
+**En compensation, la liste d'attente devient un actif d'acquisition** : elle qualifie, elle segmente, et elle donne un motif de reprise de contact au moment du lancement effectif.
+
+---
+
+## 3\. LES HUIT PRINCIPES DIRECTEURS
+
+À reproduire en tête du brief remis au développeur et au designer.
+
+| \# | Principe | Traduction concrète |
+| :---- | :---- | :---- |
+| 1 | **Le site ne vend pas. Il qualifie.** | L'action principale n'est pas « nous contacter », c'est « faire le point » |
+| 2 | **Le vide est un matériau.** | 60 % de chaque page est blanche. La densité signale l'insécurité. |
+| 3 | **Rien n'est affirmé sans être vérifiable.** | Aucun chiffre, aucun superlatif, aucune promesse de résultat |
+| 4 | **On dit d'abord ce qu'on n'est pas.** | La démarcation précède la description sur chaque page clé |
+| 5 | **Les gens avant les services.** | La page équipe est la deuxième plus visitée après l'accueil. Elle doit être la plus soignée. |
+| 6 | **Une action par page, jamais deux.** | Aucune page ne propose simultanément deux appels à l'action |
+| 7 | **Le lexique du Quart, jamais l'imagerie maritime.** | Faire le point, le journal de bord, tenir le cap. Aucun bateau, aucune ancre, aucune vague. |
+| 8 | **Mobile d'abord, réseau lent d'abord.** | Moins de 400 Ko par page, chargement complet sous 2 secondes en 3G |
+
+---
+
+# PARTIE II — ARCHITECTURE
+
+## 4\. PLAN DU SITE
+
+ACCUEIL
+
+│
+
+├── FAIRE LE POINT                    ← page de conversion principale
+
+│   ├── /faire-le-point               présentation du Test
+
+│   ├── /faire-le-point/test          le questionnaire (18 écrans)
+
+│   └── /faire-le-point/resultat      score \+ profil
+
+│
+
+├── LA MÉTHODE
+
+│   ├── /methode                      les trois cercles, le Protocole SOCLE
+
+│   └── /methode/indice-90            l'Indice 90 expliqué, la formule publiée
+
+│
+
+├── ACCOMPAGNEMENTS
+
+│   ├── /accompagnements              la pyramide, vue d'ensemble
+
+│   ├── /accompagnements/diagnostic   le diagnostic 360
+
+│   ├── /accompagnements/cohorte      l'accompagnement 12 mois
+
+│   ├── /accompagnements/formation    la formation méthode
+
+│   └── /accompagnements/seminaires   les Rencontres du Quart
+
+│
+
+├── ADMISSION                         ← le mécanisme Vistage
+
+│   ├── /admission                    critères publiés, ce qui exclut
+
+│   └── /admission/candidature        formulaire long
+
+│
+
+├── LE CABINET
+
+│   ├── /cabinet                      pourquoi il existe, le nom, la position
+
+│   ├── /cabinet/equipe               ← page la plus soignée du site
+
+│   └── /cabinet/deontologie          ce que nous ne faisons pas
+
+│
+
+├── VIGIE                             /vigie — à venir, liste d'attente
+
+│
+
+├── LE JOURNAL DE BORD                /journal — articles, SEO et AEO
+
+│   └── /journal/\[article\]
+
+│
+
+├── CONTACT                           /contact
+
+│
+
+└── LÉGAL
+
+    ├── /mentions-legales
+
+    ├── /confidentialite
+
+    └── /conditions
+
+**Total : 12 pages principales \+ les articles du journal \+ 3 pages légales.**
+
+### 4.1 Ordre de priorité de production
+
+| Rang | Page | Justification |
+| :---- | :---- | :---- |
+| 1 | Faire le point \+ Test \+ Résultat | C'est le produit. Sans lui, le site n'a pas d'objet. |
+| 2 | Accueil | Porte d'entrée de toute la publicité |
+| 3 | L'équipe | Deuxième page la plus visitée. Sans preuve, ce sont les visages qui portent la crédibilité. |
+| 4 | Admission | Le mécanisme de qualification |
+| 5 | La méthode | Ce qui distingue d'un coach |
+| 6 | Accompagnements | Le catalogue |
+| 7 | Le cabinet | Le récit |
+| 8 | Déontologie | Différenciateur et protection |
+| 9 | Pages légales | Obligatoires avant mise en ligne |
+| 10 | VIGIE | Liste d'attente |
+| 11 | Journal | Six articles au lancement |
+| 12 | Contact | Simple |
+
+---
+
+## 5\. LES PAGES QU'ON NE FAIT PAS, ET POURQUOI
+
+L'absence de certaines pages est un choix de positionnement. À défendre auprès de tout prestataire qui proposera de les ajouter.
+
+| Page absente | Raison |
+| :---- | :---- |
+| **Témoignages** | Il n'y en a pas. Une page vide ou garnie de citations génériques détruit plus de crédibilité qu'elle n'en crée. Elle apparaîtra en mars 2027, avec les premiers résultats de la Cohorte Fondatrice. |
+| **Nos clients / références** | Idem. Et les accompagnements sont confidentiels par nature. |
+| **Blog** | Remplacé par « Le journal de bord ». Le mot « blog » appartient au registre de l'infopreneuriat. |
+| **FAQ générique** | Les questions sont traitées dans la page concernée. Une FAQ est l'aveu qu'aucune page ne répond. |
+| **Chiffres clés** | Aucun chiffre honnête n'est disponible. Ils viendront avec le Baromètre. |
+| **Newsletter** | L'inscription se fait par le Test, qui qualifie. Un formulaire d'infolettre isolé attire le mauvais public. |
+| **Popup, chat, bandeau promotionnel** | Registre commercial incompatible |
+| **Page « Pourquoi nous choisir »** | Cette question se répond par le contenu, jamais par un titre |
+
+---
+
+## 6\. NAVIGATION ET PARCOURS
+
+### 6.1 Navigation principale — cinq entrées, jamais plus
+
+LE QUART        Faire le point   La méthode   Accompagnements   Admission   Le cabinet
+
+- Aucun menu déroulant en version bureau. Les sous-pages sont accessibles depuis leur page mère.  
+- Sur mobile, un menu en plein écran, cinq lignes, typographie large.  
+- **Le logo ne suit pas le défilement.** Une barre fixe est un réflexe commercial ; elle occupe l'écran d'un visiteur qui lit.  
+- « Faire le point » est en première position et légèrement appuyé — c'est la seule mise en avant du site.
+
+### 6.2 Pied de page
+
+Trois colonnes sobres : **Le cabinet** (À propos, Équipe, Déontologie, Contact) · **Ressources** (Faire le point, La méthode, Le journal, VIGIE) · **Légal** (Mentions, Confidentialité, Conditions, LinkedIn).
+
+En bas : `Le Quart · Conseil privé de dirigeants` puis la raison sociale et l'immatriculation.
+
+### 6.3 Les trois parcours à optimiser
+
+| Parcours | Entrée | Trajet | Sortie |
+| :---- | :---- | :---- | :---- |
+| **A — Le froid** *(publicité)* | Accueil ou Faire le point | Test → Résultat → Rapport par courriel | Séquence de courriels |
+| **B — Le vérificateur** *(recommandation)* | Accueil | Équipe → Méthode → Admission | Candidature ou Test |
+| **C — Le lecteur** *(SEO/AEO)* | Article du journal | Article → Faire le point | Test |
+
+**Le parcours B est le plus important sur ce marché**, où la prescription précède presque toujours la recherche. Un prospect à qui l'on a parlé du cabinet vient vérifier qui vous êtes. **La page Équipe est le point de bascule de ce parcours.**
+
+---
+
+# PARTIE III — LES PAGES
+
+## 7\. ACCUEIL
+
+**Objectif unique :** amener au Test des 90 Jours. **Longueur :** sept blocs, environ 600 mots au total.
+
+### Bloc 1 — Ouverture
+
+Pleine hauteur d'écran, fond Papier, aucune image.
+
+> ## Combien de temps votre entreprise fonctionnerait-elle sans vous ?
+
+> Nous accompagnons des dirigeants dont l'entreprise gagne de l'argent et repose encore entièrement sur une seule personne.  
+>   
+> **\[ Faire le point — 18 questions, 7 minutes \]**  
+>   
+> *Gratuit. Vous recevez une analyse de 8 pages.*
+
+**Interdits sur ce bloc :** aucune photographie de fond, aucune vidéo, aucun défilement automatique, aucun second bouton.
+
+### Bloc 2 — La reconnaissance
+
+Les six déclencheurs, dans les mots du dirigeant. Composés en serif, corps large, un par ligne, séparés par des filets fins.
+
+> *« Je n'ai personne à qui parler de ce que je vis vraiment. »* *« Mon associé m'a lâché. »* *« Tout repose sur moi. Si je m'arrête, tout s'arrête. »* *« Je gagne plus, mais je vais moins bien. »* *« Ça marche, mais je sens que ce n'est pas solide. »* *« Je ne pourrai pas continuer comme ça encore deux ans. »*
+
+Une seule ligne dessous : **Si l'une de ces phrases est la vôtre, ce cabinet s'adresse à vous.**
+
+### Bloc 3 — Ce que nous ne sommes pas
+
+La démarcation frontale, avant toute description. Trois lignes, sur fond Encre, texte Papier.
+
+> **Nous ne sommes pas un cabinet de coaching.** Un coach vous parle. Nous intervenons à plusieurs spécialistes sur votre entreprise, votre équipe et vous.  
+>   
+> **Nous ne sommes pas un incubateur.** Nous n'accompagnons pas des projets. Nous accompagnons des entreprises qui gagnent déjà de l'argent.  
+>   
+> **Nous ne vendons pas de formation.** Nos critères d'admission excluent la majorité des candidatures. Nos concurrents ne refusent personne.
+
+### Bloc 4 — Les trois cercles
+
+Le schéma : Le Dirigeant → L'Entourage → L'Entreprise. Trois cercles, trait fin, aucune couleur.
+
+> Un problème d'entreprise qui persiste est presque toujours un problème d'entourage non traité. Un problème d'entourage qui persiste est presque toujours un problème de dirigeant non traité.  
+>   
+> **\[ Voir la méthode \]**
+
+### Bloc 5 — L'équipe
+
+Trois ou quatre portraits en ligne, prénom, nom, fonction. Photographies réelles, lumière naturelle.
+
+> Une cellule restreinte, parce que nous n'accompagnons que trente dirigeants par an.  
+>   
+> **\[ Voir l'équipe \]**
+
+### Bloc 6 — L'admission
+
+> Nous publions nos critères. Ils excluent la majorité des entreprises, et c'est délibéré.  
+>   
+> Trois ans d'existence · un résultat net positif · six collaborateurs au minimum · un dirigeant dont l'entreprise dépend encore.  
+>   
+> **\[ Vérifier votre éligibilité \]**
+
+### Bloc 7 — Clôture
+
+> ### Structurez-vous à la hauteur de ce que vous portez.
+
+> **\[ Faire le point \]**
+
+## 8\. FAIRE LE POINT *(Test des 90 Jours)*
+
+**La page la plus importante du site.** C'est ici qu'aboutit toute la publicité.
+
+### Structure
+
+| Bloc | Contenu |
+| :---- | :---- |
+| **1 — Le constat** | *« Les travaux universitaires sur les entreprises familiales africaines établissent que leur durée de vie n'excède souvent pas huit ans — et que pour les plus solides, elle se réduit à l'espérance de vie de leur fondateur. »* Sourcé, avec renvoi. |
+| **2 — Ce que le test mesure** | Une seule chose : combien de temps l'entreprise fonctionnerait sans vous. Les trois axes. |
+| **3 — Ce que vous recevez** | L'Indice 90, le nombre de jours, un rapport de 8 pages : verdict, trois axes, forces, fragilités, point critique, scénario, suite logique. |
+| **4 — Ce que ce n'est pas** | *« Ce n'est pas un quiz. Il n'y a rien à gagner, aucune réponse valorisante, et le résultat sera probablement inconfortable. »* |
+| **5 — La rigueur** | La formule de conversion **est publiée**, avec un renvoi vers `/methode/indice-90`. Le référentiel international est cité. |
+| **6 — Confidentialité** | Ce que deviennent les réponses, qui y a accès, ce qui n'est jamais transmis. |
+| **7 — Action** | **\[ Commencer — 18 questions, 7 minutes \]** |
+
+### Le bloc 5 est votre meilleur actif de crédibilité
+
+Publier la formule est contre-intuitif et décisif. Aucun concurrent ne le fait, parce qu'aucun n'a de formule. Un dirigeant qui constate que le calcul est vérifiable en déduit tout le reste sur le sérieux de la maison. **C'est la substitution de preuve la plus économique dont vous disposez.**
+
+### Le test lui-même
+
+Conforme à la spécification version 1.1 : 18 écrans, une question par écran, pas de retour arrière, barre de progression discrète, écrans de transition informatifs, porte email après Q18, score, profil, rapport par courriel sous 60 secondes.
+
+**Rappel :** aucune gamification, aucun emoji, aucune couleur de récompense.
+
+## 9\. LA MÉTHODE
+
+**Objectif :** démontrer qu'il existe un mécanisme, et non une relation.
+
+### /methode
+
+| Bloc | Contenu |
+| :---- | :---- |
+| 1 | **Le principe fondateur** — trois cercles, une seule dépendance |
+| 2 | **Les cinq phases du Protocole SOCLE** — Scanner, Ordonner, Consolider, Lever, Éprouver. Pour chacune : objet, livrable, durée. |
+| 3 | **Ce qui est mesuré** — l'Indice d'Autonomie à l'entrée et à la sortie |
+| 4 | **Qui intervient, sur quoi** — le tableau de la cellule pluridisciplinaire |
+| 5 | **Ce que la méthode ne traite pas** — renvoi à Déontologie |
+| 6 | **\[ Faire le point \]** |
+
+### /methode/indice-90
+
+Page technique, courte, à forte valeur de crédibilité.
+
+- Ce que mesure l'Indice, les trois axes et leurs pondérations  
+- **La formule de conversion, écrite en clair**  
+- Le tableau Indice → jours, de 0 à 100 par pas de 10  
+- **La mention indispensable** : *« L'Indice 90 porte le nom du seuil qu'il mesure : les 90 jours — un trimestre, soit un quart d'année. Un Indice de 90 sur 100 ne signifie pas 90 jours : il signifie que votre entreprise dépasse largement ce seuil, franchi à partir d'un Indice de 71\. »*  
+- Le référentiel international dont l'instrument s'inspire, et ce qui l'en distingue
+
+---
+
+## 10\. LES ACCOMPAGNEMENTS
+
+### /accompagnements — vue d'ensemble
+
+Les cinq étages, présentés du haut vers le bas — l'accompagnement d'abord, l'abonnement en dernier. **On ne présente pas un cabinet en commençant par son produit le moins cher.**
+
+| Étage | Prix affiché | Statut |
+| :---- | :---- | :---- |
+| Accompagnement 12 mois | 20 000 € · **Cohorte Fondatrice : 13 000 €, 15 places** | Sur candidature |
+| Diagnostic 360 | 2 500 € | Sur candidature |
+| Les Rencontres du Quart | 530 € · 750 € diaspora | Deux par an |
+| Formation à la méthode | 597 € · 997 € diaspora | Accès immédiat |
+| VIGIE | — | **À venir, T1 2027** |
+
+### Recommandation : afficher les prix, y compris les 20 000 €
+
+L'argument contraire existe et il est sérieux : afficher 13,1 millions de FCFA sur une page publique, sans aucune preuve, peut faire fuir.
+
+**Je recommande néanmoins de les afficher, pour trois raisons.**
+
+1. **C'est cohérent avec tout le reste.** Vous publiez vos critères, votre formule, votre déontologie. Cacher le prix est la seule chose que vous cacheriez — et c'est précisément ce que font les vendeurs de formation, qui ne le révèlent qu'au téléphone.  
+2. **Le prix est un filtre gratuit.** Il fait le tri sans mobiliser une minute de temps commercial.  
+3. **Le prix affiché est un signal de niveau.** Un dirigeant qui voit 20 000 € comprend immédiatement de quel type de maison il s'agit. Un prix caché suggère qu'il est négociable, donc arbitraire.
+
+Chaque page produit suit la même structure : **pour qui · ce que vous obtenez · ce que cela n'inclut pas · comment cela se déroule · prix · comment candidater.**
+
+Le bloc « ce que cela n'inclut pas » est obligatoire sur chaque page. C'est le plus lu et le plus rare.
+
+---
+
+## 11\. ADMISSION
+
+**La page qui différencie le plus, et la plus simple à écrire.**
+
+### /admission
+
+| Bloc | Contenu |
+| :---- | :---- |
+| 1 | **Pourquoi nous publions nos critères** — parce que la majorité des candidatures ne correspondent pas, et qu'une conversation qui n'aboutit pas coûte du temps aux deux parties |
+| 2 | **Les critères durs** — trois ans, résultat net ≥ 34 M FCFA, CA ≥ 180 M FCFA, six collaborateurs. Avec équivalents en euros et en dirhams. |
+| 3 | **Les critères de pertinence** — au moins trois sur cinq |
+| 4 | **Qui nous refusons** — entreprise non rentable, dirigeant en détresse psychique aiguë, financement mettant en péril la trésorerie, recherche d'un prestataire d'exécution |
+| 5 | **La règle des 25 %** — l'accompagnement ne doit jamais dépasser un quart du résultat net. Expliquée, parce qu'elle démontre que vous protégez le client contre vous-même. |
+| 6 | **Ce qui se passe ensuite** — les étapes, les délais |
+| 7 | **\[ Déposer une candidature \]** |
+
+### Note sur le taux de refus
+
+Le rapport n°2 recommandait de publier le taux de refus. **Impossible au lancement** — vous n'avez refusé personne. L'afficher serait un mensonge.
+
+> À ajouter en mars 2027, une fois la Cohorte Fondatrice constituée, sous la forme : *« Sur les 74 candidatures reçues pour la Cohorte Fondatrice, 15 ont été retenues. »*
+
+En attendant, le bloc 4 — qui nous refusons — fait le même travail sans chiffre.
+
+### /admission/candidature
+
+Formulaire long, délibérément exigeant. **L'effort de remplissage est lui-même un filtre.** 15 à 20 questions, environ 12 minutes, sauvegarde de progression, scoring automatique, et pour les profils non éligibles : un message écrit orientant vers la formation ou les Rencontres, jamais un silence.
+
+---
+
+## 12\. LE CABINET
+
+**Objectif :** répondre à « qui sont ces gens et pourquoi devrais-je les croire ».
+
+| Bloc | Contenu |
+| :---- | :---- |
+| 1 | **Pourquoi ce cabinet existe** — le paragraphe des erreurs du fondateur *(section 2.2)*. C'est le bloc le plus important du site après le Test. |
+| 2 | **Le nom** — ce qu'est le quart, à bord. Court, factuel, sans emphase. C'est ce paragraphe que les gens citeront. |
+| 3 | **Ce que nous faisons** — trois cercles, trente dirigeants par an, une cellule restreinte |
+| 4 | **Où nous travaillons** — Côte d'Ivoire, Sénégal, Cameroun, Maroc, et la diaspora francophone |
+| 5 | **Ce que nous ne ferons jamais** — renvoi à Déontologie |
+| 6 | **\[ Voir l'équipe \]** |
+
+---
+
+## 13\. L'ÉQUIPE
+
+**La deuxième page la plus visitée. Sans preuve de résultats, ce sont les visages qui portent la crédibilité. Elle doit être la mieux faite du site.**
+
+### Structure
+
+Une fiche par personne, en pleine largeur, alternant photographie et texte.
+
+| Élément | Spécification |
+| :---- | :---- |
+| Photographie | Lumière naturelle, latérale. Lieu de travail réel. Buste, regard vers l'objectif. **Aucun bras croisé, aucun fond studio, aucun costume de circonstance.** |
+| Prénom et nom | Complets |
+| Fonction dans le cabinet | Précise. Pas « expert », mais « psychologue clinicienne — diagnostic et protocole d'orientation » |
+| Parcours | Trois à cinq lignes, **vérifiables**. Formation, années, structures. |
+| Sur quoi cette personne intervient | Une phrase, rattachée à l'un des trois cercles |
+| Une phrase à la première personne | Ce qu'elle regarde en premier chez un dirigeant. **C'est ce qui rend la page vivante.** |
+
+### Composition au lancement
+
+| Ordre | Personne | Rattachement |
+| :---- | :---- | :---- |
+| 1 | Vous | Direction · regard transversal |
+| 2 | **Charbel Zohoun** | Le cercle Entreprise · développement et résultats |
+| 3 | **Françoise Munoz** | Le cercle Dirigeant · psychologue clinicienne, diagnostic et orientation |
+| 4 | **À nommer avant la mise en ligne** | Le cercle Entreprise · structuration, organisation, comptabilité |
+
+Puis une section distincte, sobre :
+
+> **Nous travaillons avec un réseau de consultants** en structuration d'entreprise, expertise comptable et expertise juridique, mobilisés selon les besoins de chaque accompagnement.
+
+### Le bloc de clôture
+
+> Nous n'accompagnons que trente dirigeants par an. C'est le nombre que cette équipe peut suivre sans dégrader ce qu'elle promet.
+
+**Cette phrase transforme la petitesse de l'équipe en argument.** Ne pas la retirer.
+
+### Ce qui est interdit sur cette page
+
+Photographies de banque d'images · portraits sur fond blanc studio · titres ronflants · listes de certifications sans contexte · **toute mention laissant croire que la psychologue exerce une thérapie auprès des clients du cabinet.**
+
+---
+
+## 14\. DÉONTOLOGIE
+
+**Page rare, peu coûteuse, et parmi les plus efficaces du site.** Elle rassure les prospects sérieux, elle décourage les autres, et elle vous protège.
+
+| Bloc | Contenu |
+| :---- | :---- |
+| 1 | **Notre périmètre** — ce que le cabinet traite |
+| 2 | **Ce que nous ne faisons pas** — aucun diagnostic médical ou psychologique, aucun conseil juridique, fiscal ou d'investissement opposable, aucune recommandation touchant aux relations familiales ou conjugales |
+| 3 | **Notre protocole d'orientation** — les critères écrits qui déclenchent un renvoi vers un médecin, un avocat ou un expert-comptable |
+| 4 | **Nos critères de refus** — nous refusons d'accompagner un dirigeant en détresse psychique aiguë, et pourquoi |
+| 5 | **Confidentialité** — ce qui est enregistré, qui y accède, ce qui n'est jamais transmis |
+| 6 | **Supervision** — la supervision externe par un professionnel accrédité |
+| 7 | **Nos assurances** — responsabilité civile professionnelle |
+
+**Vocabulaire strictement banni de tout le site**, et cette page le rappelle en interne : sélection, appelés, ceux qui méritent, « je vois ce que les autres ne voient pas », transformation, révélation, éveil.
+
+---
+
+## 15\. LE JOURNAL DE BORD
+
+**Objectif :** captation SEO et AEO, et démonstration d'expertise. **Ce n'est pas un blog.**
+
+### Format
+
+Articles de 1 200 à 2 000 mots, un par semaine à partir du lancement, signés par un membre de l'équipe. **Chaque article se termine par le Test des 90 Jours** — l'objectif n'est pas le trafic, c'est le remplissage du Test.
+
+### Les six articles du lancement
+
+Choisis pour couvrir les requêtes que personne ne travaille en français africain :
+
+1. Comment savoir si votre entreprise dépend trop de vous  
+2. Mon associé m'a trahi : les cinq premières décisions  
+3. Entreprise rentable, dirigeant épuisé : ce que cela révèle vraiment  
+4. Déléguer quand on est fondateur d'une PME en Afrique de l'Ouest  
+5. Trésorerie de l'entreprise et sollicitations familiales : comment poser une règle sans se couper des siens  
+6. Ce qui rend une entreprise vendable — et ce qui la rend invendable
+
+**L'article 5 est prioritaire.** C'est le sujet le plus recherché, le moins traité, et celui qui démontre le mieux votre connaissance réelle du terrain.
+
+---
+
+## 16\. VIGIE
+
+Page courte, sobre, sans emphase.
+
+| Bloc | Contenu |
+| :---- | :---- |
+| 1 | **Ce que sera VIGIE** — le conseiller de premier recours, disponible à toute heure |
+| 2 | **Le principe** — il ne valide jamais une intention sans l'avoir éprouvée. Un exemple de dialogue court, en illustration. |
+| 3 | **Ce qu'il ne fera pas** — ni thérapeute, ni avocat, ni comptable ; il ne remplace pas l'accompagnement |
+| 4 | **Disponibilité** — premier trimestre 2027 |
+| 5 | **\[ Être prévenu du lancement \]** — liste d'attente, prénom, nom, email. **Aucun paiement.** |
+
+**Interdits absolus :** compte à rebours, prix affiché, « bientôt disponible » sans date, promesse de capacité non vérifiable, vocabulaire d'intelligence artificielle grand public.
+
+---
+
+## 17\. CONTACT
+
+Sobre et bref.
+
+- Une adresse de courriel unique : `contact@cabinetlequart.com`  
+- Un formulaire de quatre champs : nom, courriel, pays, message  
+- Le rappel : *« Pour une demande d'accompagnement, passez par \[Admission\] — nous répondrons plus vite et plus précisément. »*  
+- **Aucun numéro de téléphone public au lancement.** Il ouvre la porte aux sollicitations non qualifiées et sature un temps que vous n'avez pas.  
+- La ville de domiciliation, sans adresse postale complète
+
+---
+
+## 18\. PAGES LÉGALES
+
+Rédigées par un juriste, pas par un modèle générique.
+
+| Page | Points de vigilance |
+| :---- | :---- |
+| **Mentions légales** | Raison sociale, forme juridique, immatriculation, directeur de publication, hébergeur |
+| **Confidentialité** | Traitement des réponses au Test, durée de conservation, droit d'accès et d'effacement, sous-traitants, transferts hors zone. **Mention amendée : « … à aucun tiers sans votre accord explicite »** — indispensable pour le futur module Le Relèvement |
+| **Conditions** | Conditions de vente, absence d'obligation de résultat, périmètre, exclusions, conditions d'usage de VIGIE le moment venu |
+
+**Un bandeau de consentement aux traceurs est obligatoire** dès lors qu'un pixel publicitaire est déployé.
+
+---
+
+# PARTIE IV — SYSTÈME
+
+## 19\. DESIGN SYSTEM APPLIQUÉ AU WEB
+
+Rappel de la charte, en valeurs directement utilisables.
+
+\--encre:   \#131B22;   /\* texte, filets, logo \*/
+
+\--papier:  \#F4F1EA;   /\* fond de toutes les pages \*/
+
+\--ardoise: \#5A6670;   /\* texte secondaire, légendes \*/
+
+\--laiton:  \#8C7A4B;   /\* accent unique, 4 % maximum \*/
+
+\--brume:   \#DFDBD1;   /\* fonds de tableaux, jauges \*/
+
+\--blanc:   \#FFFFFF;   /\* champs de formulaire uniquement \*/
+
+| Élément | Règle |
+| :---- | :---- |
+| Fond | **Papier sur toute la longueur.** Jamais de blanc pur en fond de page. |
+| Largeur de contenu | 720 px maximum pour le texte courant |
+| Titrage | Spectral Medium |
+| Labeur | Inter Regular / Medium |
+| Corps de texte | 17 px, interligne 1,65 |
+| Longueur de ligne | 65 à 75 signes |
+| Alignement | À gauche, drapeau à droite. **Jamais de justification.** |
+| Boutons | Rectangles à angles droits, bordure 1 px Encre, fond transparent. Au survol : fond Encre, texte Papier. **Aucun arrondi, aucune ombre.** |
+| Séparateurs | Filet 0,5 px Ardoise à 30 %, ou le filet double sous les titres de section |
+| Animation | Un fondu de 200 ms à l'apparition. Rien d'autre. |
+| Pictogrammes | **Aucun, nulle part.** |
+| Images | Portraits réels uniquement |
+
+---
+
+## 20\. BIBLIOTHÈQUE DE COMPOSANTS
+
+À construire une fois, à réutiliser partout.
+
+| \# | Composant | Usage |
+| :---- | :---- | :---- |
+| 1 | Bloc d'ouverture | Accueil, pages produit |
+| 2 | Bloc de citations *(les déclencheurs)* | Accueil |
+| 3 | Bloc de démarcation *(fond Encre)* | Accueil, pages produit |
+| 4 | Filet double | Sous chaque titre de section |
+| 5 | Graduation | En-têtes, pieds de page, séparateurs |
+| 6 | Fiche de personne | Page Équipe |
+| 7 | Carte de produit | Accompagnements |
+| 8 | Tableau de critères | Admission |
+| 9 | Bouton primaire / secondaire | Partout |
+| 10 | Écran de question du Test | Test, 18 occurrences |
+| 11 | Jauge des 90 jours | Résultat, page Indice 90 |
+| 12 | Radar à trois branches | Résultat |
+| 13 | Fiche d'article | Journal |
+| 14 | Formulaire long | Candidature |
+| 15 | Bloc de clôture | Bas de chaque page |
+
+---
+
+## 21\. CONVERSION ET MESURE
+
+### 21.1 Les événements à suivre
+
+| Événement | Ce qu'il mesure |
+| :---- | :---- |
+| `test_demarre` | Entrée dans le questionnaire |
+| `test_question_N` | Abandon question par question |
+| `test_porte_atteinte` | Q18 terminée |
+| `test_porte_franchie` | Email fourni — **indicateur n°1** |
+| `test_profil_complete` | Bloc de profil rempli |
+| `rapport_ouvert` | Ouverture du PDF |
+| `candidature_demarree` / `candidature_envoyee` | Tunnel premium |
+| `vigie_liste_attente` | Intérêt pour l'abonnement |
+| `formation_achetee` | Vente directe |
+
+**Le pixel publicitaire se déclenche à la question 10**, pas à la fin — pour récupérer les abandons tardifs.
+
+### 21.2 Objectifs au lancement
+
+| Indicateur | Cible |
+| :---- | :---- |
+| Visite → démarrage du Test | \> 25 % |
+| Complétion du Test | \> 60 % |
+| Franchissement de la porte | \> 65 % |
+| Renseignement du profil | \> 75 % |
+| Ouverture du rapport | \> 70 % |
+| Visite → candidature *(profils éligibles)* | \> 3 % |
+
+---
+
+## 22\. SEO ET AEO
+
+| Élément | Spécification |
+| :---- | :---- |
+| Structure | Une seule balise de titre principal par page, hiérarchie stricte |
+| Métadonnées | Rédigées à la main pour les 12 pages. Aucune génération automatique. |
+| Données structurées | `Organization`, `Person` pour chaque membre de l'équipe, `Article` pour le journal, `FAQPage` uniquement là où de vraies questions sont traitées |
+| **AEO** | Chaque article répond à **une question, posée en titre**, avec une réponse directe dans les 80 premiers mots. C'est ce que les moteurs de réponse citent. |
+| Maillage | Chaque article renvoie vers Faire le point et vers la page de méthode concernée |
+| Multilingue | **Français uniquement.** Toute la cible est francophone. |
+| Devise | Affichage FCFA · MAD · € selon le pays détecté, avec possibilité de changer |
+
+---
+
+## 23\. TECHNIQUE
+
+| Exigence | Valeur |
+| :---- | :---- |
+| **Poids par page** | **\< 400 Ko**, tout compris |
+| Chargement complet en 3G | **\< 2 secondes** |
+| Rendu | Serveur ou statique. **Pas d'application monopage** pour les pages éditoriales. |
+| Polices | 4 fichiers woff2 sous-ensemblés `latin` \+ `latin-ext`, auto-hébergés. **Jamais via un service tiers.** |
+| Images | AVIF avec repli WebP, largeur maximale 1400 px, chargement différé |
+| Vidéo | **Aucune** |
+| Base de données | Relationnelle, avec la table « dossier d'entreprise » prévue dès maintenant |
+| Hébergement | Serveur avec réseau de diffusion couvrant l'Afrique de l'Ouest et le Maghreb |
+| Sauvegardes | Quotidiennes, chiffrées, restauration testée |
+| Sécurité | HTTPS, en-têtes de sécurité, page d'administration protégée et **journalisation des accès** |
+| Accessibilité | Contraste ≥ 4,5:1, navigation au clavier, textes alternatifs |
+| Compatibilité | Deux dernières versions des navigateurs courants, Android 9+ |
+
+---
+
+## 24\. CONTENU À PRODUIRE
+
+| \# | Livrable | Qui | Charge |
+| :---- | :---- | :---- | :---- |
+| 1 | Textes des 12 pages | Rédacteur \+ validation fondateur | 5 j |
+| 2 | **Le paragraphe des erreurs du fondateur** | **Vous, dicté** | 1 h |
+| 3 | Fiches des 4 membres de l'équipe | Chacun \+ rédacteur | 2 j |
+| 4 | 6 articles du journal | Rédacteur | 6 j |
+| 5 | Textes de la page Déontologie | Rédacteur \+ juriste | 2 j |
+| 6 | Pages légales | Juriste | 2 j |
+| 7 | Séance photographique équipe | Photographe | 1 j |
+| 8 | Métadonnées des 12 pages | Rédacteur | 0,5 j |
+| 9 | Séquences de courriels post-Test | Rédacteur | 2 j |
+
+**Le point 2 est le plus important du tableau et le seul non délégable.** Dictez-le, ne le rédigez pas.
+
+---
+
+## 25\. RECETTE, PLANNING, BUDGET
+
+### 25.1 Planning
+
+| Semaine | Étape |
+| :---- | :---- |
+| S1 | Brief, arborescence validée, maquettes de trois pages types |
+| S2 | Design system, bibliothèque de composants |
+| S3 | Intégration des pages éditoriales |
+| S4 | Intégration du Test et du parcours de résultat |
+| S5 | Formulaire de candidature, séquences de courriels, page d'administration |
+| S6 | Séance photographique, contenus définitifs |
+| S7 | Journal, SEO, données structurées, pages légales |
+| S8 | **Recette, tests de charge, mise en ligne** |
+
+### 25.2 Budget
+
+| Poste | Fourchette |
+| :---- | :---- |
+| Design et intégration | 6 000 – 11 000 € |
+| Test des 90 Jours *(déjà engagé)* | — |
+| Rédaction | 2 500 – 4 000 € |
+| Photographie | 800 – 2 000 € |
+| Juridique | 1 500 € |
+| Hébergement, outils, première année | 900 € |
+| **Total** | **11 700 – 19 400 €** |
+
+Cohérent avec la ligne « identité, site, charte, dépôt de marque » du plan de lancement.
+
+### 25.3 Recette — les onze contrôles avant mise en ligne
+
+| \# | Contrôle | Critère |
+| :---- | :---- | :---- |
+| 1 | Poids | Chaque page sous 400 Ko |
+| 2 | Vitesse | Chargement complet sous 2 s en 3G bridée |
+| 3 | Mobile | Toutes les pages sur un écran de 360 px de large |
+| 4 | Test | Parcours complet, du premier écran au PDF reçu |
+| 5 | Jeu de référence | Les 101 valeurs de l'Indice 90 reproduites exactement |
+| 6 | Archétypes | Les huit branches produisent chacune un rapport distinct |
+| 7 | Candidature | Scoring correct sur trois profils test |
+| 8 | Courriels | Rendus corrects sur les principaux clients de messagerie |
+| 9 | Légal | Trois pages en ligne, bandeau de traceurs fonctionnel |
+| 10 | Impression | Une page imprimée en noir et blanc reste lisible |
+| 11 | **Contrôle du regard** | Un dirigeant extérieur parcourt le site 3 minutes puis répond : que fait ce cabinet, pour qui, et comment on y entre. **S'il hésite sur l'une des trois, le site n'est pas prêt.** |
+
+---
+
+## ANNEXE — CE QU'IL FAUT DÉCIDER AVANT LA SEMAINE 1
+
+| \# | Décision | Bloquant pour |
+| :---- | :---- | :---- |
+| 1 | **Nommer le référent structuration / comptabilité** | Page Équipe |
+| 2 | Raison sociale et pays d'immatriculation | Pages légales, pied de page |
+| 3 | Confirmer l'affichage des prix, 20 000 € inclus | Page Accompagnements |
+| 4 | Valider la date de VIGIE : T1 2027 | Page VIGIE |
+| 5 | Statut de ……… : partenaire, ou absent du site | Page Équipe |
+| 6 | Date de la séance photographique | Semaine 6 |
+| 7 | Acter le besoin de trésorerie révisé *(+40 à 45 k€)* | Plan financier |
+
+---
+
+*Cahier des charges établi le 3 août 2026\. Il intègre la spécification du Test des 90 Jours version 1.1, la charte graphique du rapport n°7 et les décisions de périmètre du rapport n°11. Toute évolution porte un numéro de version et mentionne celle qu'elle remplace.*  

@@ -11,8 +11,11 @@
   Le mot de passe est vérifié ici, côté serveur, jamais côté client.
 
   Deux actions, données dans le corps de la requête :
-    { "mot_de_passe": "...", "action": "liste" }              -> tableau récapitulatif
-    { "mot_de_passe": "...", "action": "detail", "id": "..." } -> un résultat complet
+    { "mot_de_passe": "...", "action": "liste" }                  -> tableau récapitulatif
+    { "mot_de_passe": "...", "action": "detail", "id": "..." }     -> un résultat complet
+    { "mot_de_passe": "...", "action": "vigie" }                   -> liste d'attente VIGIE
+    { "mot_de_passe": "...", "action": "contacts" }                -> messages de contact
+    { "mot_de_passe": "...", "action": "contact-lu", "id": "..." } -> marque un message lu
 */
 
 import { createClient } from 'jsr:@supabase/supabase-js@2'
@@ -103,6 +106,48 @@ Deno.serve(async (req) => {
 
       if (error || !data) return reponse({ erreur: 'Résultat introuvable' }, 404)
       return reponse({ resultat: data })
+    }
+
+    /*
+      ── FORMULAIRES DU SITE VITRINE (ajout du 25 août 2026) ──
+      Les tables `vigie_liste_attente` et `contacts` sont alimentées par
+      cabinetlequart.com. Comme `resultats`, elles sont inaccessibles à la clé
+      publique : cette fonction est le seul chemin de lecture.
+    */
+
+    if (action === 'vigie') {
+      const { data, error } = await admin
+        .from('vigie_liste_attente')
+        .select('id, prenom, nom, courriel, cree_le')
+        .order('cree_le', { ascending: false })
+        .limit(1000)
+
+      if (error) return reponse({ erreur: 'Lecture impossible' }, 500)
+      return reponse({ total: data.length, inscrits: data })
+    }
+
+    if (action === 'contacts') {
+      const { data, error } = await admin
+        .from('contacts')
+        .select('id, prenom, nom, courriel, categorie, message, lu, cree_le')
+        .order('cree_le', { ascending: false })
+        .limit(1000)
+
+      if (error) return reponse({ erreur: 'Lecture impossible' }, 500)
+
+      return reponse({
+        total: data.length,
+        nonLus: data.filter((m) => !m.lu).length,
+        messages: data,
+      })
+    }
+
+    // Marque un message comme lu. Le passage à « lu » est définitif : c'est un
+    // repère de traitement, pas un état qu'on fait osciller.
+    if (action === 'contact-lu' && typeof id === 'string') {
+      const { error } = await admin.from('contacts').update({ lu: true }).eq('id', id)
+      if (error) return reponse({ erreur: 'Mise à jour impossible' }, 500)
+      return reponse({ ok: true })
     }
 
     return reponse({ erreur: 'Action inconnue' }, 400)

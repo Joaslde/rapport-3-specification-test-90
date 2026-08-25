@@ -1,0 +1,160 @@
+# CABINETLEQUART.COM — PAGE D'ACCUEIL
+## Version finale, prête pour intégration
+
+**Date :** 3 août 2026
+**Longueur :** 312 mots
+**Destinataires :** développeur, designer
+
+---
+
+## RÈGLES APPLICABLES À TOUTE LA PAGE
+
+| # | Règle |
+|---|---|
+| 1 | **Un seul type de bouton : « Faire le point ».** Il apparaît deux fois — bloc 1 et bloc 7. Tous les autres renvois sont des liens texte. |
+| 2 | Fond Papier `#F4F1EA` sur toute la longueur. Aucun blanc pur. |
+| 3 | Aucune photographie hors des portraits du bloc 5. Aucune banque d'images. |
+| 4 | Aucun défilement automatique, aucune animation hors fondu de 200 ms. |
+| 5 | Le logo ne suit pas le défilement. |
+| 6 | Page complète sous 400 Ko, chargement sous 2 s en 3G. |
+
+---
+
+# BLOC 1 — OUVERTURE
+
+*Pleine hauteur d'écran. Fond Papier. Aucune image, aucune vidéo, aucun second bouton.*
+
+> # Combien de temps votre entreprise fonctionnerait-elle sans vous ?
+>
+> Nous accompagnons des dirigeants dont l'entreprise gagne de l'argent et repose encore entièrement sur une seule personne.
+>
+> **[ Faire le point — 18 questions, 7 minutes ]**
+>
+> *Gratuit. Vous recevez une analyse de 8 pages par courriel.*
+
+---
+
+# BLOC 2 — LA RECONNAISSANCE
+
+*Serif, corps large, une phrase par ligne, filets fins en séparation.*
+
+> « Je n'ai personne à qui parler de ce que je vis vraiment. »
+>
+> « Mon associé m'a lâché. »
+>
+> « Tout repose sur moi. Si je m'arrête, tout s'arrête. »
+>
+> « Je gagne plus, mais je vais moins bien. »
+>
+> « Ça marche, mais je sens que ce n'est pas solide. »
+>
+> « Je ne pourrai pas continuer comme ça encore deux ans. »
+>
+> ---
+>
+> Si l'une de ces phrases est la vôtre, ce cabinet s'adresse à vous.
+
+---
+
+# BLOC 3 — CE QUE NOUS NE SOMMES PAS
+
+*Fond Encre `#131B22`, texte Papier. Trois paragraphes.*
+
+> **Nous ne sommes pas un cabinet de coaching.** Un coach vous parle. Nous intervenons à plusieurs spécialistes sur votre entreprise, votre équipe et vous.
+>
+> **Nous ne sommes pas un incubateur.** Nous n'accompagnons pas des projets. Nous accompagnons des entreprises qui gagnent déjà de l'argent.
+>
+> **Nous ne vendons pas de formation.** Nos critères d'admission excluent la majorité des entreprises. Nos concurrents ne refusent personne.
+
+---
+
+# BLOC 4 — LES TROIS CERCLES
+
+*Schéma SVG : trois cercles au trait fin, Encre, aucune couleur. Le Dirigeant → L'Entourage → L'Entreprise.*
+
+> Un problème d'entreprise qui persiste est presque toujours un problème d'entourage non traité. Un problème d'entourage qui persiste est presque toujours un problème de dirigeant non traité.
+>
+> C'est pour cela que nous traitons les trois ensemble.
+>
+> → *Voir la méthode*
+
+---
+
+# BLOC 5 — L'ÉQUIPE
+
+*Quatre portraits en ligne. Lumière naturelle, lieu de travail réel. Prénom, nom, fonction sous chaque portrait.*
+
+> **Charbel Zohoun** — fondateur
+> **Françoise Munoz** — psychologue clinicienne
+> **Anato Aminou Christian** — expertise comptable
+> **Ange Désirée Nioule** — expertise juridique
+>
+> Quatre regards sur la même situation : vous, vos comptes, votre cadre juridique, votre organisation.
+>
+> Trente dirigeants par an, pas davantage. C'est le nombre que cette équipe peut suivre sans dégrader ce qu'elle promet.
+>
+> → *Voir l'équipe*
+
+---
+
+# BLOC 6 — L'ADMISSION
+
+*Fond Papier. Critères composés en une ligne, séparés par des points médians.*
+
+> Nous publions nos critères. Ils excluent la majorité des entreprises, et c'est délibéré.
+>
+> **Trois ans d'existence · six collaborateurs · un chiffre d'affaires d'au moins 180 millions de FCFA (275 000 €) · un résultat net d'au moins 34 millions de FCFA (52 000 €) · un dirigeant dont l'entreprise dépend encore.**
+>
+> → *Voir tous nos critères, et ceux que nous refusons*
+
+---
+
+# BLOC 7 — CLÔTURE
+
+> ## Structurez-vous à la hauteur de ce que vous portez.
+>
+> **[ Faire le point ]**
+
+---
+
+## NOTES D'INTÉGRATION
+
+### Ce qui a été corrigé par rapport à l'ossature
+
+| # | Correction | Motif |
+|---|---|---|
+| 1 | Le bouton « Vérifier votre éligibilité » devient un lien texte | La page a un objectif unique. Deux boutons concurrents détournent l'intention au moment où elle est la plus haute. |
+| 2 | Les critères chiffrés remplacent les critères vagues | « Six collaborateurs » n'exclut personne. Les seuils réels justifient la phrase qui les précède. |
+| 3 | Les montants sont affichés en FCFA | Ancre géographique. Un dirigeant d'Abidjan sait en une ligne que le cabinet s'adresse à lui. |
+| 4 | « la majorité des candidatures » → « la majorité des entreprises » | Aucune candidature n'a encore été reçue |
+| 5 | « nous n'accompagnons que trente dirigeants par an » → « Trente dirigeants par an, pas davantage » | Énonce une règle, pas une pratique établie |
+| 6 | « par courriel » ajouté au bloc 1 | Le Test exige une adresse avant l'affichage du score. L'annoncer réduit l'abandon à la porte. |
+| 7 | Les quatre membres nommés, les disciplines énoncées | Démontre que « plusieurs spécialistes » n'est pas une formule |
+| 8 | « Voir la méthode » et « Voir l'équipe » deviennent des liens texte | Un seul type de bouton sur la page |
+| 9 | Une phrase ajoutée au bloc 4 : *« C'est pour cela que nous traitons les trois ensemble. »* | Le schéma expose un constat sans dire ce que le cabinet en fait |
+
+### Liens de la page
+
+| Emplacement | Cible |
+|---|---|
+| Bloc 1, bouton | `/faire-le-point` |
+| Bloc 4, lien texte | `/methode` |
+| Bloc 5, lien texte | `/cabinet/equipe` |
+| Bloc 6, lien texte | `/admission` |
+| Bloc 7, bouton | `/faire-le-point` |
+
+**Cinq liens. Aucun autre.** Le pied de page assure le reste de la navigation.
+
+### Deux points à traiter avant la mise en ligne
+
+**Le volet développement et résultats n'a pas de visage.** L'équipe couvre le dirigeant, les comptes et le cadre juridique. La dimension entreprise au sens du développement et de la performance repose sur le fondateur seul. La rédaction du bloc 5 en tient compte — « votre organisation » est rattachée au fondateur, sans surpromesse. Si un intervenant sur ce volet rejoint le cabinet avant la mise en ligne, la ligne s'ajoute sans rien réécrire.
+
+**La séance photographique conditionne le bloc 5.** Quatre portraits réels, lumière naturelle, lieu de travail. Sans eux, le bloc ne peut pas être publié — et il n'existe aucun substitut acceptable, la charte interdisant les images de banque.
+
+### Volume
+
+**312 mots**, hors libellés de boutons et mentions. L'objectif de 600 mots figurant au cahier des charges est à corriger : sur cette page, il conduirait à ajouter du texte qui n'a aucune fonction.
+
+---
+
+*Copie établie le 3 août 2026. Elle intègre les corrections validées et la composition d'équipe communiquée le même jour.*
