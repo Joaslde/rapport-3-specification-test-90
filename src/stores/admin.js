@@ -27,6 +27,8 @@ export const useAdmin = defineStore('admin', () => {
   const inscritsVigie = ref([])
   const messages = ref([])
   const messagesNonLus = ref(0)
+  const candidatures = ref([])
+  const candidaturesNouvelles = ref(0)
 
   async function appeler(action, params = {}) {
     const { data, error } = await supabase.functions.invoke('admin-resultats', {
@@ -101,6 +103,40 @@ export const useAdmin = defineStore('admin', () => {
     attendre le serveur : l'opération ne peut pas échouer de façon significative
     et un décompte qui met une seconde à bouger donne l'impression d'un bug.
   */
+  async function chargerCandidatures() {
+    chargement.value = true
+    try {
+      const data = await appeler('candidatures')
+      candidatures.value = data.candidatures
+      candidaturesNouvelles.value = data.nouvelles
+    } catch {
+      erreur.value = 'Impossible de charger les candidatures.'
+    } finally {
+      chargement.value = false
+    }
+  }
+
+  /*
+    Ouvre un dossier complet. Le serveur le fait passer de « nouvelle » à « lue »
+    au passage : on reflète ce changement localement pour que le compteur suive.
+  */
+  async function chargerCandidature(id) {
+    const data = await appeler('candidature-detail', { id })
+    const ligne = candidatures.value.find((c) => c.id === id)
+    if (ligne && ligne.statut === 'nouvelle') {
+      ligne.statut = 'lue'
+      candidaturesNouvelles.value = Math.max(0, candidaturesNouvelles.value - 1)
+    }
+    return data.candidature
+  }
+
+  /** Décision du cabinet sur un dossier : retenue ou refusée. */
+  async function changerStatutCandidature(id, statut) {
+    await appeler('candidature-statut', { id, statut })
+    const ligne = candidatures.value.find((c) => c.id === id)
+    if (ligne) ligne.statut = statut
+  }
+
   async function marquerLu(id) {
     const message = messages.value.find((m) => m.id === id)
     if (!message || message.lu) return
@@ -121,6 +157,8 @@ export const useAdmin = defineStore('admin', () => {
     inscritsVigie.value = []
     messages.value = []
     messagesNonLus.value = 0
+    candidatures.value = []
+    candidaturesNouvelles.value = 0
     sessionStorage.removeItem(CLE_SESSION)
   }
 
@@ -137,6 +175,8 @@ export const useAdmin = defineStore('admin', () => {
     inscritsVigie,
     messages,
     messagesNonLus,
+    candidatures,
+    candidaturesNouvelles,
     chargement,
     erreur,
     connecter,
@@ -145,6 +185,9 @@ export const useAdmin = defineStore('admin', () => {
     chargerVigie,
     chargerMessages,
     marquerLu,
+    chargerCandidatures,
+    chargerCandidature,
+    changerStatutCandidature,
     deconnecter,
     tenterReprise,
   }

@@ -27,7 +27,7 @@ const lienCopie = ref(false)
   Chaque onglet charge ses données à sa première ouverture seulement.
 */
 const onglet = ref('tests')
-const dejaCharges = ref({ vigie: false, messages: false })
+const dejaCharges = ref({ vigie: false, messages: false, candidatures: false })
 
 async function ouvrirOnglet(nom) {
   onglet.value = nom
@@ -39,7 +39,52 @@ async function ouvrirOnglet(nom) {
     await admin.chargerMessages()
     dejaCharges.value.messages = true
   }
+  if (nom === 'candidatures' && !dejaCharges.value.candidatures) {
+    await admin.chargerCandidatures()
+    dejaCharges.value.candidatures = true
+  }
 }
+
+/*
+  ── Candidatures ──
+  Le dossier complet n'est chargé qu'à l'ouverture : la liste ne contient pas les
+  montants ni les réponses ouvertes, et c'est délibéré (données financières).
+*/
+const candidatureOuverte = ref(null)
+const chargementCandidature = ref(false)
+
+async function ouvrirCandidature(id) {
+  chargementCandidature.value = true
+  candidatureOuverte.value = await admin.chargerCandidature(id)
+  chargementCandidature.value = false
+}
+
+function fermerCandidature() {
+  candidatureOuverte.value = null
+}
+
+async function deciderCandidature(statut) {
+  if (!candidatureOuverte.value) return
+  await admin.changerStatutCandidature(candidatureOuverte.value.id, statut)
+  candidatureOuverte.value.statut = statut
+}
+
+const STATUTS_LIBELLES = {
+  nouvelle: 'Nouvelle',
+  lue: 'Lue',
+  retenue: 'Retenue',
+  refusee: 'Refusée',
+}
+
+/* Les cinq critères de pertinence, dans l'ordre de la page /admission/candidature.
+   Le formulaire n'envoie que des booléens : les libellés vivent ici. */
+const CRITERES_PERTINENCE = [
+  'Ni conseil, ni comité de direction réel',
+  'Ni associé de confiance, ni mentor, ni pair à qui parler',
+  'Prend seul l’essentiel des décisions structurantes',
+  'Relations clients ou bancaires majeures passent par lui personnellement',
+  'A traversé une rupture au cours des deux dernières années',
+]
 
 /*
   ── Messagerie ──
@@ -195,6 +240,7 @@ const NIVEAUX_LIBELLES = {
             <h1 class="mt-2 font-titre text-[26px] font-semibold">
               {{ onglet === 'tests' ? 'Résultats du test'
                 : onglet === 'vigie' ? 'Liste d’attente VIGIE'
+                : onglet === 'candidatures' ? 'Candidatures'
                 : 'Messages reçus' }}
             </h1>
           </div>
@@ -213,6 +259,7 @@ const NIVEAUX_LIBELLES = {
               { id: 'tests', libelle: 'Tests' },
               { id: 'vigie', libelle: 'Liste VIGIE' },
               { id: 'messages', libelle: 'Messages' },
+              { id: 'candidatures', libelle: 'Candidatures' },
             ]"
             :key="t.id"
             class="relative -mb-px border-b-2 pb-3 text-[13px] tracking-[0.04em] uppercase transition-colors"
@@ -228,6 +275,12 @@ const NIVEAUX_LIBELLES = {
               class="ml-2 inline-block min-w-[18px] rounded-full bg-encre px-1.5 py-0.5 text-[10px] leading-none text-papier"
             >
               {{ admin.messagesNonLus }}
+            </span>
+            <span
+              v-if="t.id === 'candidatures' && admin.candidaturesNouvelles > 0"
+              class="ml-2 inline-block min-w-[18px] rounded-full bg-encre px-1.5 py-0.5 text-[10px] leading-none text-papier"
+            >
+              {{ admin.candidaturesNouvelles }}
             </span>
           </button>
         </nav>
@@ -389,6 +442,98 @@ const NIVEAUX_LIBELLES = {
           </div>
         </div>
 
+        <!-- ============ ONGLET : CANDIDATURES ============ -->
+        <!--
+          La liste ne montre ni les montants, ni les réponses ouvertes : ce sont des
+          données financières d'entreprises identifiées (docs/securite.md S4). Elles
+          n'arrivent qu'à l'ouverture d'un dossier précis.
+        -->
+        <div v-else-if="onglet === 'candidatures'">
+          <div class="mt-8 flex items-baseline justify-between border-b border-trait pb-4">
+            <p class="text-sm text-gristexte">
+              <span class="font-titre text-2xl font-semibold text-encre">
+                {{ admin.candidatures.length }}
+              </span>
+              <span class="ml-2">
+                {{ admin.candidatures.length > 1 ? 'candidatures' : 'candidature' }}
+              </span>
+              <span v-if="admin.candidaturesNouvelles > 0" class="ml-2 text-encre">
+                · {{ admin.candidaturesNouvelles }} non
+                {{ admin.candidaturesNouvelles > 1 ? 'lues' : 'lue' }}
+              </span>
+            </p>
+            <button
+              class="text-[13px] text-gristexte hover:text-encre"
+              :disabled="admin.chargement"
+              @click="admin.chargerCandidatures"
+            >
+              {{ admin.chargement ? 'Actualisation…' : 'Actualiser' }}
+            </button>
+          </div>
+
+          <p class="mt-4 text-[13px] leading-relaxed text-gristexte">
+            Le cabinet s’engage à répondre sous cinq jours ouvrés, y compris pour dire non.
+            Ouvrir un dossier le marque comme lu.
+          </p>
+
+          <div class="mt-6 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-trait text-[11px] tracking-[0.06em] text-gristexte uppercase">
+                  <th class="py-3 pr-4">Date</th>
+                  <th class="py-3 pr-4">Candidat</th>
+                  <th class="py-3 pr-4">Entreprise</th>
+                  <th class="py-3 pr-4">Pays</th>
+                  <th class="py-3 pr-4">Secteur</th>
+                  <th class="py-3 pr-4 text-right">Effectif</th>
+                  <th class="py-3 pr-4">Statut</th>
+                  <th class="py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="c in admin.candidatures"
+                  :key="c.id"
+                  class="border-b border-trait/60 hover:bg-encre/[0.02]"
+                >
+                  <td class="py-3 pr-4 whitespace-nowrap text-gristexte">
+                    {{ formaterDate(c.cree_le) }}
+                  </td>
+                  <td class="py-3 pr-4" :class="c.statut === 'nouvelle' ? 'font-medium' : ''">
+                    {{ c.prenom }} {{ c.nom }}
+                  </td>
+                  <td class="py-3 pr-4">{{ c.entreprise }}</td>
+                  <td class="py-3 pr-4 text-gristexte">{{ c.pays }}</td>
+                  <td class="py-3 pr-4 text-gristexte">{{ c.secteur }}</td>
+                  <td class="py-3 pr-4 text-right">{{ c.effectif }}</td>
+                  <td class="py-3 pr-4">
+                    <!-- Le statut se lit au texte et à la graisse, jamais à une
+                         couleur d'alerte (§19 : ni rouge, ni vert). -->
+                    <span
+                      class="text-[12px]"
+                      :class="c.statut === 'nouvelle' ? 'font-medium text-encre'
+                        : c.statut === 'retenue' ? 'text-laiton'
+                        : 'text-gristexte'"
+                    >
+                      {{ STATUTS_LIBELLES[c.statut] ?? c.statut }}
+                    </span>
+                  </td>
+                  <td class="py-3 text-right">
+                    <button class="text-[13px] text-encre underline" @click="ouvrirCandidature(c.id)">
+                      Ouvrir
+                    </button>
+                  </td>
+                </tr>
+                <tr v-if="!admin.candidatures.length">
+                  <td colspan="8" class="py-10 text-center text-gristexte">
+                    Aucune candidature reçue.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <!-- ============ ONGLET : MESSAGES ============ -->
         <!--
           Vue de type messagerie : une bande par message, cliquable, qui ouvre un
@@ -467,6 +612,165 @@ const NIVEAUX_LIBELLES = {
         </div>
       </div>
     </main>
+
+    <!-- ============ PANNEAU D'UN DOSSIER DE CANDIDATURE ============ -->
+    <!--
+      Le dossier complet, y compris les montants et les trois réponses ouvertes.
+      Le corps défile ; l'en-tête (qui) et le pied (décision) restent visibles.
+    -->
+    <div
+      v-if="candidatureOuverte || chargementCandidature"
+      class="fixed inset-0 z-10 bg-encre/40"
+      @click.self="fermerCandidature"
+      @keydown.esc="fermerCandidature"
+    >
+      <div class="ml-auto flex h-full w-full max-w-xl flex-col bg-papier shadow-xl">
+        <div class="shrink-0 border-b border-trait px-8 pt-10 pb-6">
+          <button class="text-[13px] text-gristexte hover:text-encre" @click="fermerCandidature">
+            ← Fermer
+          </button>
+
+          <p v-if="chargementCandidature" class="mt-6 text-gristexte">Chargement…</p>
+
+          <div v-else-if="candidatureOuverte" class="mt-6">
+            <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+              {{ candidatureOuverte.entreprise }}
+            </p>
+            <h2 class="mt-2 font-titre text-2xl font-semibold">
+              {{ candidatureOuverte.prenom }} {{ candidatureOuverte.nom }}
+            </h2>
+            <p class="mt-1 text-[13px] text-gristexte">{{ candidatureOuverte.fonction }}</p>
+            <p class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
+              <a :href="`mailto:${candidatureOuverte.courriel}`" class="break-all text-encre underline">
+                {{ candidatureOuverte.courriel }}
+              </a>
+              <a :href="`tel:${candidatureOuverte.telephone}`" class="text-encre underline">
+                {{ candidatureOuverte.telephone }}
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <div v-if="candidatureOuverte" class="min-h-0 flex-1 overflow-y-auto px-8 py-6">
+          <p class="text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+            L’entreprise
+          </p>
+          <dl class="mt-4 space-y-2 text-sm">
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Pays</dt>
+              <dd class="min-w-0 text-right break-words">{{ candidatureOuverte.pays }}</dd>
+            </div>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Secteur</dt>
+              <dd class="min-w-0 text-right break-words">{{ candidatureOuverte.secteur }}</dd>
+            </div>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Année de création</dt>
+              <dd class="min-w-0 text-right">{{ candidatureOuverte.annee_creation }}</dd>
+            </div>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Effectif</dt>
+              <dd class="min-w-0 text-right">{{ candidatureOuverte.effectif }}</dd>
+            </div>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Chiffre d’affaires</dt>
+              <dd class="min-w-0 text-right break-words">
+                {{ candidatureOuverte.chiffre_affaires }}
+              </dd>
+            </div>
+            <div class="flex justify-between gap-4 border-b border-trait pb-2">
+              <dt class="shrink-0 text-gristexte">Résultat net</dt>
+              <dd class="min-w-0 text-right break-words">{{ candidatureOuverte.resultat_net }}</dd>
+            </div>
+          </dl>
+
+          <p class="mt-8 text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+            Critères de pertinence
+            <span class="ml-1 normal-case">
+              — {{ (candidatureOuverte.criteres || []).filter(Boolean).length }} sur 5
+              <span v-if="(candidatureOuverte.criteres || []).filter(Boolean).length < 3">
+                (moins de trois)
+              </span>
+            </span>
+          </p>
+          <ul class="mt-4 space-y-2 text-sm">
+            <li
+              v-for="(libelle, i) in CRITERES_PERTINENCE"
+              :key="i"
+              class="flex gap-3"
+              :class="(candidatureOuverte.criteres || [])[i] ? 'text-encre' : 'text-gristexte'"
+            >
+              <span class="mt-0.5 shrink-0 font-medium">
+                {{ (candidatureOuverte.criteres || [])[i] ? '■' : '□' }}
+              </span>
+              <span>{{ libelle }}</span>
+            </li>
+          </ul>
+
+          <p class="mt-8 text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+            Test des 90 Jours
+          </p>
+          <p class="mt-3 text-sm">
+            {{ candidatureOuverte.test_90_passe ? 'Déjà passé' : 'Pas encore passé' }}
+          </p>
+
+          <p class="mt-8 text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+            Ce qui vous amène
+          </p>
+          <p class="mt-3 text-[15px] leading-[1.7] whitespace-pre-wrap">
+            {{ candidatureOuverte.amene }}
+          </p>
+
+          <p class="mt-8 text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+            Ce que vous avez déjà tenté
+          </p>
+          <p class="mt-3 text-[15px] leading-[1.7] whitespace-pre-wrap">
+            {{ candidatureOuverte.deja_tente }}
+          </p>
+
+          <p class="mt-8 text-[11px] font-medium tracking-[0.14em] text-gristexte uppercase">
+            Si rien ne changeait dans dix-huit mois
+          </p>
+          <p class="mt-3 text-[15px] leading-[1.7] whitespace-pre-wrap">
+            {{ candidatureOuverte.dix_huit_mois }}
+          </p>
+
+          <p class="mt-8 border-t border-trait pt-4 text-[12px] text-gristexte">
+            Candidature déposée le {{ formaterDate(candidatureOuverte.cree_le) }} ·
+            consentement recueilli le {{ formaterDate(candidatureOuverte.consentement_le) }}
+          </p>
+        </div>
+
+        <div v-if="candidatureOuverte" class="shrink-0 border-t border-trait px-8 py-5">
+          <div class="flex items-center justify-between gap-4">
+            <p class="text-[13px] text-gristexte">
+              Statut :
+              <span class="text-encre">
+                {{ STATUTS_LIBELLES[candidatureOuverte.statut] ?? candidatureOuverte.statut }}
+              </span>
+            </p>
+            <div class="flex gap-3">
+              <button
+                class="border border-trait px-4 py-2 text-[13px] tracking-[0.04em] text-gristexte uppercase transition-colors hover:border-encre/40 hover:text-encre"
+                @click="deciderCandidature('refusee')"
+              >
+                Refuser
+              </button>
+              <button
+                class="border border-encre px-4 py-2 text-[13px] tracking-[0.04em] text-encre uppercase transition-colors hover:bg-encre hover:text-papier"
+                @click="deciderCandidature('retenue')"
+              >
+                Retenir
+              </button>
+            </div>
+          </div>
+          <p class="mt-3 text-[12px] text-gristexte">
+            La réponse elle-même reste à envoyer par courriel — le cabinet s’engage sur cinq
+            jours ouvrés, y compris pour dire non.
+          </p>
+        </div>
+      </div>
+    </div>
 
     <!-- ============ PANNEAU DE LECTURE D'UN MESSAGE ============ -->
     <!--

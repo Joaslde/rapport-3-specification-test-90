@@ -16,6 +16,9 @@
     { "mot_de_passe": "...", "action": "vigie" }                   -> liste d'attente VIGIE
     { "mot_de_passe": "...", "action": "contacts" }                -> messages de contact
     { "mot_de_passe": "...", "action": "contact-lu", "id": "..." } -> marque un message lu
+    { "mot_de_passe": "...", "action": "candidatures" }            -> dossiers de candidature
+    { "mot_de_passe": "...", "action": "candidature-detail", "id": "..." } -> un dossier complet
+    { "mot_de_passe": "...", "action": "candidature-statut", "id": "...", "statut": "retenue" }
 */
 
 import { createClient } from 'jsr:@supabase/supabase-js@2'
@@ -46,7 +49,7 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return reponse({ erreur: 'Méthode non autorisée' }, 405)
 
   try {
-    const { mot_de_passe, action, id } = await req.json()
+    const { mot_de_passe, action, id, statut } = await req.json()
 
     const attendu = Deno.env.get('ADMIN_PASSWORD')
     if (!attendu || typeof mot_de_passe !== 'string' || !comparerEnTempsConstant(mot_de_passe, attendu)) {
@@ -148,6 +151,62 @@ Deno.serve(async (req) => {
       const { error } = await admin.from('contacts').update({ lu: true }).eq('id', id)
       if (error) return reponse({ erreur: 'Mise à jour impossible' }, 500)
       return reponse({ ok: true })
+    }
+
+    /*
+      ── CANDIDATURES À L'ACCOMPAGNEMENT (25 août 2026) ──
+      Table la plus sensible du projet : chiffre d'affaires et résultat net
+      d'entreprises identifiées. Elle n'est lisible que par ici.
+
+      La liste ne renvoie PAS les données financières ni les réponses ouvertes :
+      un tableau récapitulatif n'en a pas besoin, et moins ces valeurs circulent,
+      mieux c'est. Elles ne partent qu'au détail, dossier par dossier.
+    */
+
+    if (action === 'candidatures') {
+      const { data, error } = await admin
+        .from('candidatures')
+        .select('id, prenom, nom, entreprise, pays, secteur, effectif, statut, cree_le')
+        .order('cree_le', { ascending: false })
+        .limit(1000)
+
+      if (error) return reponse({ erreur: 'Lecture impossible' }, 500)
+
+      return reponse({
+        total: data.length,
+        nouvelles: data.filter((c) => c.statut === 'nouvelle').length,
+        candidatures: data,
+      })
+    }
+
+    if (action === 'candidature-detail' && typeof id === 'string') {
+      const { data, error } = await admin
+        .from('candidatures')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle()
+
+      if (error || !data) return reponse({ erreur: 'Candidature introuvable' }, 404)
+
+      // Ouvrir un dossier « nouvelle » le marque comme lu : le compteur de
+      // dossiers en attente reflète ce qui n'a réellement pas été regardé.
+      if (data.statut === 'nouvelle') {
+        await admin.from('candidatures').update({ statut: 'lue' }).eq('id', id)
+        data.statut = 'lue'
+      }
+
+      return reponse({ candidature: data })
+    }
+
+    // Décision du cabinet sur un dossier. 'nouvelle' est exclu : on ne rend pas
+    // un dossier à son état initial une fois qu'il a été lu.
+    if (action === 'candidature-statut' && typeof id === 'string') {
+      if (!['lue', 'retenue', 'refusee'].includes(statut)) {
+        return reponse({ erreur: 'Statut invalide' }, 400)
+      }
+      const { error } = await admin.from('candidatures').update({ statut }).eq('id', id)
+      if (error) return reponse({ erreur: 'Mise à jour impossible' }, 500)
+      return reponse({ ok: true, statut })
     }
 
     return reponse({ erreur: 'Action inconnue' }, 400)
