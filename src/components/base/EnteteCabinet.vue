@@ -17,16 +17,17 @@ defineProps({
       :class="compact ? 'py-4' : 'py-5'"
     >
       <!--
-        Monogramme « 90 » cerclé + nom : donne un point d'ancrage visuel
-        à l'identité, sans logo ni image (spec §16.3 : aucune photo).
+        Logo du cabinet Le Quart + nom. Remplace le monogramme « 90 » cerclé
+        du 26 août 2026 : le cabinet a fourni son logo officiel entre-temps.
+        Agrandi le même jour (32px -> 48px, compact 40px) : le détail du logo
+        (compas + inscription circulaire) disparaissait à la petite taille.
       -->
       <div class="flex items-center gap-3">
-        <span
-          class="chiffres flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-laiton font-titre text-[11px] font-semibold text-laiton tabular-nums"
-          aria-hidden="true"
-        >
-          90
-        </span>
+        <img
+          src="/logo-favicon.png"
+          alt="Le Quart"
+          class="w-10 h-10 shrink-0 rounded-full sm:h-12 sm:w-12"
+        />
         <p class="font-titre text-[15px] font-semibold tracking-[-0.01em] text-encre">
           Le Test des 90 Jours
         </p>

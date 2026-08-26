@@ -54,7 +54,7 @@ async function commencer() {
       <blockquote class="mt-8 border-l-2 border-laiton pl-7">
         <p class="font-titre text-[19px] leading-[1.55] font-medium sm:text-[21px]">
           Les travaux universitaires sur les entreprises africaines établissent un constat sévère :
-          leur durée de vie n'excède souvent pas huit ans — et pour les plus solides, elle est
+          leur durée de vie n'excède souvent pas huit ans, et pour les plus solides, elle est
           réduite à l'espérance de vie de leur fondateur.
         </p>
       </blockquote>
